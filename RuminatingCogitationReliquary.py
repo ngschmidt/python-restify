@@ -12,8 +12,6 @@ from django.core.validators import URLValidator
 # JSON is the storage method leveraged for play storage, settings, etc.
 import json
 
-# Class Definitions
-# They're not here to stay, just passing through
 class RuminatingCogitationReliquary:
 
     # Initial Variable Settings
