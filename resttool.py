@@ -7,8 +7,8 @@
 import argparse
 
 # Import Python Classes
-from RuminatingCogitationReliquary import RuminatingCogitationReliquary
-from RuminatingCogitationSettings import RuminatingCogitationSettings
+from RuminatingCogitation import Reliquary
+from RuminatingCogitation import Settings
 
 # JSON Parsing tool
 import json
@@ -22,11 +22,11 @@ parser.add_argument('play', help=play_help)
 args = parser.parse_args()
 
 if args.play == 'create_settings':
-    template = RuminatingCogitationSettings()
+    template = Settings()
     print(template.get_settings_json())
     exit()
 
-cogitation_interface = RuminatingCogitationReliquary(args.f)
+cogitation_interface = Reliquary(args.f)
 
 if args.play == 'list_plays':
     print(json.dumps(cogitation_interface.cogitation_bibliotheca, indent=4))
