@@ -7,8 +7,7 @@
 import argparse
 
 # Import Python Classes
-from RuminatingCogitation import Reliquary
-from RuminatingCogitation import Settings
+from RuminatingCogitation.RuminatingCogitation import Reliquary, Settings
 
 # JSON Parsing tool
 import json
