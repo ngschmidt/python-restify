@@ -26,8 +26,11 @@ python3 resttool.py -f settings.json list_plays
 
 ## Notes
 
+I'm working on module packaging.
+
 ## TODO
 
+* Module-level invocation
 * More Content
 * Automated testing
 
