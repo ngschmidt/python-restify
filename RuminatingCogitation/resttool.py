@@ -14,7 +14,7 @@ from RuminatingCogitation.Settings import Settings
 import json
 
 play_help = 'Play to execute, Example: delete_do-things_<uuid>. \r\n' + \
-    'Other options: `list_plays`, or `create_settings` to build a settings file.'  
+            'Other options: `list_plays`, or `create_settings` to build a settings file.'
 # Arguments Parsing
 parser = argparse.ArgumentParser(description='Fetch via API')
 parser.add_argument('-f', help='REST Settings File')

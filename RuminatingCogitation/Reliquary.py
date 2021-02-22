@@ -16,17 +16,17 @@ class Reliquary:
 
     # Initial Variable Settings
     #
-    cogitation_verbosity =      0
+    cogitation_verbosity = 0
     cogitation_certvalidation = True
-    cogitation_username =       ''
-    cogitation_password =       ''
-    cogitation_authkey =        ''
-    cogitation_authcert =       ''
-    cogitation_endpoint =       ''
-    cogitation_bibliotheca =    {}
-    cogitation_errors =         {}
+    cogitation_username = ''
+    cogitation_password = ''
+    cogitation_authkey = ''
+    cogitation_authcert = ''
+    cogitation_endpoint = ''
+    cogitation_bibliotheca = {}
+    cogitation_errors = {}
 
-    # We're pretty much picking up our configuration data 
+    # We're pretty much picking up our configuration data
     def __init__(self, input_settings):
 
         # Load Settings from JSON
@@ -75,7 +75,8 @@ class Reliquary:
                 'content-type': 'application/json',
                 'X-Allow-Overwrite': 'true'
             }
-            do_api_get_url = self.cogitation_endpoint + self.cogitation_bibliotheca[do_api_thing][0] + do_api_object + self.cogitation_bibliotheca[do_api_thing][1]
+            do_api_get_url = self.cogitation_endpoint + self.cogitation_bibliotheca[do_api_thing][0] +
+                                do_api_object + self.cogitation_bibliotheca[do_api_thing][1]
             do_api_get_r = requests.delete(do_api_get_url, headers=do_api_get_headers, verify=self.cogitation_certvalidation, auth=(self.cogitation_username, self.cogitation_password))
             # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
             response_code = do_api_get_r.status_code
@@ -108,7 +109,8 @@ class Reliquary:
                 'X-Allow-Overwrite': 'true'
             }
             do_api_get_url = self.cogitation_endpoint + self.cogitation_bibliotheca[do_api_thing][0] + do_api_object
-            do_api_get_r = requests.get(do_api_get_url, headers=do_api_get_headers, verify=self.cogitation_certvalidation, auth=(self.cogitation_username, self.cogitation_password))
+            do_api_get_r = requests.get(do_api_get_url, headers=do_api_get_headers, verify=self.cogitation_certvalidation,
+                                        auth=(self.cogitation_username, self.cogitation_password))
             # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
             response_code = do_api_get_r.status_code
             print(response_code)
@@ -130,6 +132,6 @@ class Reliquary:
         except Exception as e:
             print('E1002: Unhandled Requests exception! ' + str(e))
             exit()
-    
+
     def get_http_error_code(self, get_http_error_code_code):
         return json.dumps(self.cogitation_errors[get_http_error_code_code], indent=4)
