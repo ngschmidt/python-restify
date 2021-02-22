@@ -30,7 +30,7 @@ class Reliquary:
     def __init__(self, input_settings):
 
         # Load Settings from JSON
-        try: 
+        try:
             json_filehandle = open(input_settings, 'r')
             json_settings = json.load(json_filehandle)
         except:
@@ -75,7 +75,7 @@ class Reliquary:
                 'content-type': 'application/json',
                 'X-Allow-Overwrite': 'true'
             }
-            do_api_get_url = self.cogitation_endpoint + self.cogitation_bibliotheca[do_api_thing][0] +
+            do_api_get_url = self.cogitation_endpoint + self.cogitation_bibliotheca[do_api_thing][0] + \
                                 do_api_object + self.cogitation_bibliotheca[do_api_thing][1]
             do_api_get_r = requests.delete(do_api_get_url, headers=do_api_get_headers, verify=self.cogitation_certvalidation, auth=(self.cogitation_username, self.cogitation_password))
             # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
