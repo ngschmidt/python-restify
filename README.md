@@ -4,6 +4,8 @@
 
 Provide a python tool to quickly invoke REST calls with a pre-defined list of settings, plays.
 
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 ## How to use this tool
 
 Invoke via the CLI:
