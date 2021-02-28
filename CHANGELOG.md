@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - GPG signature
 - Markdownlint settings
+- Python packaging
 
 ## [13-Feb-2021] Start of Changelog
 
