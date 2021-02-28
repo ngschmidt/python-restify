@@ -3,7 +3,6 @@ requires = [
     "setuptools>=42",
     "wheel",
     "requests",
-    "json",
     "django.core"
 ]
 build-backend = "setuptools.build_meta"
