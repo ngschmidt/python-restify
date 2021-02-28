@@ -1,37 +1,103 @@
-## Welcome to GitHub Pages
+# Python REST Tool
 
-You can use the [editor on GitHub](https://github.com/ngschmidt/python-resttool/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+## Software Objectives
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+* Provide a direct, straightforward method to interact with RESTful interfaces
+* Save typing time by DRY (`Don't Repeat Yourself`)
+* Retain settings between "plays"
+* Enable rapid iteration, recording "plays" for later
 
-### Markdown
+## How to use this tool
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+Download the package:
 
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+```bash
+python3 -m pip install restify-ENGYAK
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+Invoke via the CLI:
 
-### Jekyll Themes
+```bash
+python3 -m restify -f settings.json get_api-object
+```
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/ngschmidt/python-resttool/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+To build a new settings file:
 
-### Support or Contact
+```bash
+python3 -m restify create_settings > settings.json
+```
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+To list plays provided by a settings file:
+
+```bash
+python3 -m restify -f settings.json list_plays
+```
+
+## Customizing this tool
+
+The primary value here is customization. This project will provide a limited subset of shared plays, but these `reliquaries` are the consumer's responsibility.
+
+To create a new custom `reliquary,` generate a new file:
+
+```bash
+python3 -m restify create_settings > new_file.json
+```
+
+The vast majority of this generated file is for HTTP error handling - and won't need any work unless there are some idiosyncracies with the endpoint. Customization for a new endpoint should begin here:
+
+```json
+    "settings": {
+        "authentication": {
+            "username": "admin",
+            "password": "password",
+            "method": "basic",
+            "certificate": "",
+            "key": ""
+        },
+        "tls": {
+            "validation": false
+        },
+        "verbosity": 1,
+        "endpoint": ""
+    },
+    "plays": {},
+```
+
+## Templating
+
+Generally, this tool's design intent is to use a `settings file` per endpoint. With repeatable endpoints, it would be an opinionated recommendation to leverage Jinja2 templates as follows:
+
+Create a new Jinja2 template
+
+```bash
+python3 -m restify create_settings | sed 's/"endpoint": "{{ endpoint }}" > endpoint_template.j2
+```
+
+Generate some Python templating code:
+
+```python
+# Import Jinja2 modules
+from jinja2 import Environment, FileSystemLoader
+
+# Create Environment
+local_env = Environment(loader=FileSystemLoader("."))
+
+# Load Endpoint Template
+endpoint_template = local_env.get_template("endpoint_template.j2")
+print(endpoint_template.render(endpoint="https://abcdef.engyak.net/"))
+```
+
+Congratulate yourself on your new responsibility as an automation maintainer!
+
+## Leveraging this as a Python class
+
+The package `restify-ENGYAK` provides two python classes:
+
+* `RuminatingCogitationSettings`: Storage class for the endpoint definition and settings. Not used, it's just here to help generate settings files. Completely viable alternative to Jinja if that better fits consumption models
+* `RuminatingCogitationReliiquary`: Storage class for saved plays. Has a "constructor" to connect to an endpoint, and functions (formatted as `do_api_<verb>`) invoke further actions from there.
+
+These are freely available to customize.
+
+## Saved Libraries
+
+* [NSX-T](nsxt.json)
