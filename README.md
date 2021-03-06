@@ -38,6 +38,8 @@ python3 -m restify -f settings.json list_plays
 
 * More Content
 * Automated testing
+* Token authentication
+* More actions than `GET`/`DELETE`
 
 ## Authors
 
