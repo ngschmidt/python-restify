@@ -26,8 +26,6 @@ class Settings:
     settings_file = {
         "settings": {
             "authentication": {
-                "username": "admin",
-                "password": "password",
                 "method": "basic",
                 "certificate": "",
                 "key": "",
@@ -250,6 +248,10 @@ class Reliquary:
     def namshub(self, namshub_string, namshub_variables):
         namshub_verb = self.get_play_verb(namshub_string)
         namshub_resource = self.get_play_uri(namshub_string)
+        if self.get_play_requiresvariables(namshub_string) and not namshub_variables:
+            exit(
+                "Error: Variables required by play, but not provided! Specify as a JSON dictionary with `--vars`"
+            )
         if namshub_verb == "DELETE":
             print(
                 self.do_api_delete(
@@ -318,3 +320,9 @@ class Reliquary:
             return self.cogitation_bibliotheca[get_play_name]["requiresbody"]
         except Exception as e:
             exit("Exception fetching play requirement: " + str(get_play_name) + str(e))
+
+    def get_play_requiresvariables(self, get_play_name):
+        try:
+            return self.cogitation_bibliotheca[get_play_name]["requiresbody"]
+        except:
+            return False

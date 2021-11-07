@@ -19,7 +19,8 @@
 			"description": "Read cluster certificate ID",
 			"method": "GET",
 			"requiresbody": false,
-			"variables": []
+			"requiresvariables": false,
+			"variables": {}
 		}
 	},
 	"errors": {

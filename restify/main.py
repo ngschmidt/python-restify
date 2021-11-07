@@ -13,14 +13,29 @@ import json
 from RuminatingCogitation import Settings
 from RuminatingCogitation import Reliquary
 
+
+def load_json(filename):
+    # Load Settings from JSON
+    try:
+        with open(filename, "r") as json_filehandle:
+            return json.load(json_filehandle)
+    except Exception as e:
+        print("E0000: Error Loading Settings File: " + str(e))
+        exit()
+
+
 play_help = (
     "Play to execute, Example: delete_do-things_<uuid>. \r\n"
     + "Other options: `list_plays`, or `create_settings` to build a settings file."
 )
 # Arguments Parsing
 parser = argparse.ArgumentParser(description="Fetch via API")
-parser.add_argument("-f", help="REST Settings File")
 parser.add_argument("play", help=play_help)
+parser.add_argument("-f", help="REST Settings File (JSON)")
+parser.add_argument("-p", help="Payload (body) File (JSON)")
+parser.add_argument(
+    "--vars", help="Variables to pass (JSON). For more detail, use list_plays"
+)
 args = parser.parse_args()
 
 if args.play == "create_settings":
@@ -34,5 +49,10 @@ if args.play == "list_plays":
     print(json.dumps(cogitation_interface.cogitation_bibliotheca, indent=4))
     exit()
 
-# The play construct demonstrated above is a nam-shub, or `<verb>_<endpoint>_<object>` format. We'll use this to decide what to do, split by a dash
-cogitation_interface.namshub(args.play)
+# Provide an "overloading interface"
+if not args.p and not args.vars:
+    cogitation_interface.namshub(args.play, "")
+elif args.p and args.vars:
+    cogitation_interface.namshub(args.play, load_json(args.vars), load_json(args.p))
+elif args.p:
+    cogitation_interface.namshub(args.play, load_json(args.vars))
