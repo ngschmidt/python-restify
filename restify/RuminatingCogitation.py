@@ -12,6 +12,9 @@ from django.core.validators import URLValidator
 # JSON is how we import/export just about everything here...
 import json
 
+# Method Overloading via decorator
+from multipledispatch import dispatch
+
 
 # Begin Supporting Classes
 class Settings:
@@ -112,10 +115,10 @@ class Reliquary:
 
         # Load Settings from JSON
         try:
-            json_filehandle = open(input_settings, "r")
-            json_settings = json.load(json_filehandle)
-        except:
-            print("E0000: Error Loading Settings File!")
+            with open(input_settings, "r") as json_filehandle:
+                json_settings = json.load(json_filehandle)
+        except Exception as e:
+            print("E0000: Error Loading Settings File: " + str(e))
             exit()
 
         try:
@@ -141,18 +144,18 @@ class Reliquary:
             self.cogitation_bibliotheca = json_settings["plays"]
             # Load HTTP Errors
             self.cogitation_errors = json_settings["errors"]
-        except:
+        except Exception as e:
             print("E0002: Error Loading Settings! Settings Dictionary:")
             print(json.dumps(json_settings, indent=4))
-            exit()
+            exit(str(e))
 
         # 99% solution here is to validate that a URL provided is valid. This doesn't test it or anything
         validate = URLValidator()
         try:
             validate(self.cogitation_endpoint)
-        except:
+        except Exception as e:
             print('E0001: Invalid URL Formatting. Example: "https://www.abc.com/"')
-            exit()
+            exit(str(e))
 
     # Functions
 
@@ -252,6 +255,38 @@ class Reliquary:
         except Exception as e:
             print("E1002: Unhandled Requests exception! " + str(e))
             exit()
+
+    @dispatch(str)
+    def namshub(self, namshub_string):
+        namshub_split = namshub_string.split("_")
+        if len(namshub_split) == 3:
+            namshub_verb = namshub_split[0]
+            namshub_endpoint = namshub_split[1]
+            namshub_object = namshub_split[2]
+            if namshub_verb == "delete":
+                print(self.do_api_delete(namshub_endpoint, namshub_object))
+            elif namshub_verb == "get":
+                print(self.do_api_get(namshub_endpoint, namshub_object))
+            elif namshub_verb == "post":
+                print(self.do_api_post(namshub_endpoint, namshub_object))
+            elif namshub_verb == "patch":
+                print(self.do_api_post(namshub_endpoint, namshub_object))
+        else:
+            exit("E2002: Malformatted Play: " + json.dumps(namshub_split, indent=4))
+
+    @dispatch(str, str)
+    def namshub(self, namshub_string, namshub_body):
+        namshub_split = namshub_string.split("_")
+        if len(namshub_split) == 3:
+            namshub_verb = namshub_split[0]
+            namshub_endpoint = namshub_split[1]
+            namshub_object = namshub_split[2]
+            if namshub_verb == "post":
+                print(self.do_api_post(namshub_endpoint, namshub_object))
+            elif namshub_verb == "patch":
+                print(self.do_api_post(namshub_endpoint, namshub_object))
+        else:
+            exit("E2002: Malformatted Play: " + json.dumps(namshub_split, indent=4))
 
     def get_http_error_code(self, get_http_error_code_code):
         return json.dumps(self.cogitation_errors[get_http_error_code_code], indent=4)

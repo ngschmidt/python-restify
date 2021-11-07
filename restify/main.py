@@ -10,8 +10,8 @@ import argparse
 import json
 
 # Import Restify Library
-from restify.RuminatingCogitation import Settings
-from restify.RuminatingCogitation import Reliquary
+from RuminatingCogitation import Settings
+from RuminatingCogitation import Reliquary
 
 play_help = (
     "Play to execute, Example: delete_do-things_<uuid>. \r\n"
