@@ -244,6 +244,25 @@ class Reliquary:
             print("E1002: Unhandled Requests exception! " + str(e))
             exit()
 
+    # We have to overload to facilitate variables in the namshub.
+    # The first situation assumes no variables or body
+    @dispatch(str)
+    def namshub(self, namshub_string):
+        namshub_verb = self.get_play_verb(namshub_string)
+        namshub_resource = self.get_play_uri(namshub_string)
+        if namshub_verb == "DELETE":
+            print(
+                self.do_api_delete(
+                    self.get_play_uri(namshub_resource)
+                )
+            )
+        elif namshub_verb == "GET":
+            print(
+                self.do_api_get(
+                    self.get_play_uri(namshub_resource)
+                )
+            )
+
     @dispatch(str, str)
     def namshub(self, namshub_string, namshub_variables):
         namshub_verb = self.get_play_verb(namshub_string)
