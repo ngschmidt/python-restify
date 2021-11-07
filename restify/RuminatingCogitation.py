@@ -256,25 +256,20 @@ class Reliquary:
             print("E1002: Unhandled Requests exception! " + str(e))
             exit()
 
-    @dispatch(str)
-    def namshub(self, namshub_string):
-        namshub_split = namshub_string.split("_")
-        if len(namshub_split) == 3:
-            namshub_verb = namshub_split[0]
-            namshub_resource = namshub_split[1]
-            namshub_object = namshub_split[2]
-            if namshub_verb == "delete":
-                print(self.do_api_delete(self.get_play_uri(namshub_resource), namshub_object))
-            elif namshub_verb == "get":
-                print(self.do_api_get(self.get_play_uri(namshub_resource), namshub_object))
-        else:
-            exit("E2002: Malformatted Play: " + json.dumps(namshub_split, indent=4))
-
     @dispatch(str, str)
-    def namshub(self, namshub_string, namshub_body):
+    def namshub(self, namshub_string, namshub_object):
+        namshub_verb = self.get_play_verb(namshub_string)
+        namshub_resource = self.get_play_uri(namshub_string)
+        if namshub_verb == "DELETE":
+            print(self.do_api_delete(self.get_play_uri(namshub_resource), namshub_object))
+        elif namshub_verb == "GET":
+            print(self.do_api_get(self.get_play_uri(namshub_resource), namshub_object))
+
+    @dispatch(str, str, str)
+    def namshub(self, namshub_string, namshub_object, namshub_body):
         namshub_split = namshub_string.split("_")
         if len(namshub_split) == 3:
-            namshub_verb = namshub_split[0]
+            namshub_verb = self.get_play_verb(namshub_string)
             namshub_resource = namshub_split[1]
             namshub_object = namshub_split[2]
             if self.get_play_requiresbody(namshub_resource) is True:
@@ -295,6 +290,12 @@ class Reliquary:
             return self.cogitation_bibliotheca[get_play_name]['uri']
         except Exception as e:
             exit('Exception fetching play URI: ' + str(get_play_name) + str(e))
+
+    def get_play_verb(self, get_play_name):
+        try:
+            return self.cogitation_bibliotheca[get_play_name]['method']
+        except Exception as e:
+            exit('Exception fetching play method: ' + str(get_play_name) + str(e))
 
     def get_play_requiresbody(self, get_play_name):
         try:

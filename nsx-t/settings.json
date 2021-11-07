@@ -13,7 +13,14 @@
 		"verbosity": 1,
 		"endpoint": "https://nsx.lab.engyak.net"
 	},
-	"plays": {},
+	"plays": {
+		"get_cluster_certificate_id": {
+			"uri": "/api/v1/cluster/api-certificate",
+			"description": "Read cluster certificate ID",
+			"method": "GET",
+			"requiresbody": false
+		}
+	},
 	"errors": {
 		"200": [
 			"OK",
