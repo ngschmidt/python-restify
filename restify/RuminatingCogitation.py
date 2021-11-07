@@ -267,20 +267,15 @@ class Reliquary:
 
     @dispatch(str, str, str)
     def namshub(self, namshub_string, namshub_object, namshub_body):
-        namshub_split = namshub_string.split("_")
-        if len(namshub_split) == 3:
-            namshub_verb = self.get_play_verb(namshub_string)
-            namshub_resource = namshub_split[1]
-            namshub_object = namshub_split[2]
-            if self.get_play_requiresbody(namshub_resource) is True:
-                if namshub_verb == "post":
-                    print(self.do_api_post(self.get_play_uri(namshub_resource), namshub_object))
-                elif namshub_verb == "patch":
-                    print(self.do_api_post(self.get_play_uri(namshub_resource), namshub_object))
-            else:
-                exit("Function doesn't require a body, but the method used does!")
+        namshub_verb = self.get_play_verb(namshub_string)
+        namshub_resource = self.get_play_uri(namshub_string)
+        if self.get_play_requiresbody(namshub_resource) is True:
+            if namshub_verb == "POST":
+                print(self.do_api_post(self.get_play_uri(namshub_resource), namshub_object))
+            elif namshub_verb == "PATCH":
+                print(self.do_api_post(self.get_play_uri(namshub_resource), namshub_object))
         else:
-            exit("E2002: Malformatted Play: " + json.dumps(namshub_split, indent=4))
+            exit("Function doesn't require a body, but the method used does!")
 
     def get_http_error_code(self, get_http_error_code_code):
         return json.dumps(self.cogitation_errors[get_http_error_code_code], indent=4)
