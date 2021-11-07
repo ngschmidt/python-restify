@@ -160,7 +160,7 @@ class Reliquary:
     # Functions
 
     # Do API DELETE, using basic credentials
-    def do_api_delete(self, do_api_thing, do_api_object):
+    def do_api_delete(self, do_api_uri, do_api_object):
         # Perform API Processing - conditional basic authentication
         try:
             do_api_get_headers = {
@@ -169,9 +169,9 @@ class Reliquary:
             }
             do_api_get_url = (
                 self.cogitation_endpoint
-                + self.cogitation_bibliotheca[do_api_thing][0]
+                + self.cogitation_bibliotheca[do_api_uri][0]
                 + do_api_object
-                + self.cogitation_bibliotheca[do_api_thing][1]
+                + self.cogitation_bibliotheca[do_api_uri][1]
             )
             do_api_get_r = requests.delete(
                 do_api_get_url,
@@ -209,7 +209,7 @@ class Reliquary:
             exit()
 
     # Do API GET, using basic credentials
-    def do_api_get(self, do_api_thing, do_api_object):
+    def do_api_get(self, do_api_uri, do_api_object):
         # Perform API Processing - conditional basic authentication
         try:
             do_api_get_headers = {
@@ -218,7 +218,7 @@ class Reliquary:
             }
             do_api_get_url = (
                 self.cogitation_endpoint
-                + self.cogitation_bibliotheca[do_api_thing][0]
+                + self.cogitation_bibliotheca[do_api_uri][0]
                 + do_api_object
             )
             do_api_get_r = requests.get(
@@ -261,16 +261,12 @@ class Reliquary:
         namshub_split = namshub_string.split("_")
         if len(namshub_split) == 3:
             namshub_verb = namshub_split[0]
-            namshub_endpoint = namshub_split[1]
+            namshub_resource = namshub_split[1]
             namshub_object = namshub_split[2]
             if namshub_verb == "delete":
-                print(self.do_api_delete(namshub_endpoint, namshub_object))
+                print(self.do_api_delete(self.get_play_uri(namshub_resource), namshub_object))
             elif namshub_verb == "get":
-                print(self.do_api_get(namshub_endpoint, namshub_object))
-            elif namshub_verb == "post":
-                print(self.do_api_post(namshub_endpoint, namshub_object))
-            elif namshub_verb == "patch":
-                print(self.do_api_post(namshub_endpoint, namshub_object))
+                print(self.do_api_get(self.get_play_uri(namshub_resource), namshub_object))
         else:
             exit("E2002: Malformatted Play: " + json.dumps(namshub_split, indent=4))
 
@@ -279,14 +275,29 @@ class Reliquary:
         namshub_split = namshub_string.split("_")
         if len(namshub_split) == 3:
             namshub_verb = namshub_split[0]
-            namshub_endpoint = namshub_split[1]
+            namshub_resource = namshub_split[1]
             namshub_object = namshub_split[2]
-            if namshub_verb == "post":
-                print(self.do_api_post(namshub_endpoint, namshub_object))
-            elif namshub_verb == "patch":
-                print(self.do_api_post(namshub_endpoint, namshub_object))
+            if self.get_play_requiresbody(namshub_resource) is True:
+                if namshub_verb == "post":
+                    print(self.do_api_post(self.get_play_uri(namshub_resource), namshub_object))
+                elif namshub_verb == "patch":
+                    print(self.do_api_post(self.get_play_uri(namshub_resource), namshub_object))
+            else:
+                exit("Function doesn't require a body, but the method used does!")
         else:
             exit("E2002: Malformatted Play: " + json.dumps(namshub_split, indent=4))
 
     def get_http_error_code(self, get_http_error_code_code):
         return json.dumps(self.cogitation_errors[get_http_error_code_code], indent=4)
+
+    def get_play_uri(self, get_play_name):
+        try:
+            return self.cogitation_bibliotheca[get_play_name]['uri']
+        except Exception as e:
+            exit('Exception fetching play URI: ' + str(get_play_name) + str(e))
+
+    def get_play_requiresbody(self, get_play_name):
+        try:
+            return self.cogitation_bibliotheca[get_play_name]['requiresbody']
+        except Exception as e:
+            exit('Exception fetching play requirement: ' + str(get_play_name) + str(e))
