@@ -261,7 +261,9 @@ class Reliquary:
         namshub_verb = self.get_play_verb(namshub_string)
         namshub_resource = self.get_play_uri(namshub_string)
         if namshub_verb == "DELETE":
-            print(self.do_api_delete(self.get_play_uri(namshub_resource), namshub_object))
+            print(
+                self.do_api_delete(self.get_play_uri(namshub_resource), namshub_object)
+            )
         elif namshub_verb == "GET":
             print(self.do_api_get(self.get_play_uri(namshub_resource), namshub_object))
 
@@ -271,9 +273,17 @@ class Reliquary:
         namshub_resource = self.get_play_uri(namshub_string)
         if self.get_play_requiresbody(namshub_resource) is True:
             if namshub_verb == "POST":
-                print(self.do_api_post(self.get_play_uri(namshub_resource), namshub_object))
+                print(
+                    self.do_api_post(
+                        self.get_play_uri(namshub_resource), namshub_object
+                    )
+                )
             elif namshub_verb == "PATCH":
-                print(self.do_api_post(self.get_play_uri(namshub_resource), namshub_object))
+                print(
+                    self.do_api_post(
+                        self.get_play_uri(namshub_resource), namshub_object
+                    )
+                )
         else:
             exit("Function doesn't require a body, but the method used does!")
 
@@ -282,18 +292,18 @@ class Reliquary:
 
     def get_play_uri(self, get_play_name):
         try:
-            return self.cogitation_bibliotheca[get_play_name]['uri']
+            return self.cogitation_bibliotheca[get_play_name]["uri"]
         except Exception as e:
-            exit('Exception fetching play URI: ' + str(get_play_name) + str(e))
+            exit("Exception fetching play URI: " + str(get_play_name) + str(e))
 
     def get_play_verb(self, get_play_name):
         try:
-            return self.cogitation_bibliotheca[get_play_name]['method']
+            return self.cogitation_bibliotheca[get_play_name]["method"]
         except Exception as e:
-            exit('Exception fetching play method: ' + str(get_play_name) + str(e))
+            exit("Exception fetching play method: " + str(get_play_name) + str(e))
 
     def get_play_requiresbody(self, get_play_name):
         try:
-            return self.cogitation_bibliotheca[get_play_name]['requiresbody']
+            return self.cogitation_bibliotheca[get_play_name]["requiresbody"]
         except Exception as e:
-            exit('Exception fetching play requirement: ' + str(get_play_name) + str(e))
+            exit("Exception fetching play requirement: " + str(get_play_name) + str(e))
