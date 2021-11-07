@@ -15,6 +15,9 @@ import json
 # Method Overloading via decorator
 from multipledispatch import dispatch
 
+# Templates - use these to apply variables to URIs
+from jinja2 import Environment, BaseLoader
+
 
 # Begin Supporting Classes
 class Settings:
@@ -160,19 +163,14 @@ class Reliquary:
     # Functions
 
     # Do API DELETE, using basic credentials
-    def do_api_delete(self, do_api_uri, do_api_object):
+    def do_api_delete(self, do_api_uri):
         # Perform API Processing - conditional basic authentication
         try:
             do_api_get_headers = {
                 "content-type": "application/json",
                 "X-Allow-Overwrite": "true",
             }
-            do_api_get_url = (
-                self.cogitation_endpoint
-                + self.cogitation_bibliotheca[do_api_uri][0]
-                + do_api_object
-                + self.cogitation_bibliotheca[do_api_uri][1]
-            )
+            do_api_get_url = self.cogitation_endpoint + do_api_uri
             do_api_get_r = requests.delete(
                 do_api_get_url,
                 headers=do_api_get_headers,
@@ -209,18 +207,14 @@ class Reliquary:
             exit()
 
     # Do API GET, using basic credentials
-    def do_api_get(self, do_api_uri, do_api_object):
+    def do_api_get(self, do_api_uri):
         # Perform API Processing - conditional basic authentication
         try:
             do_api_get_headers = {
                 "content-type": "application/json",
                 "X-Allow-Overwrite": "true",
             }
-            do_api_get_url = (
-                self.cogitation_endpoint
-                + self.cogitation_bibliotheca[do_api_uri][0]
-                + do_api_object
-            )
+            do_api_get_url = self.cogitation_endpoint + do_api_uri
             do_api_get_r = requests.get(
                 do_api_get_url,
                 headers=do_api_get_headers,
@@ -257,35 +251,47 @@ class Reliquary:
             exit()
 
     @dispatch(str, str)
-    def namshub(self, namshub_string, namshub_object):
+    def namshub(self, namshub_string, namshub_variables):
         namshub_verb = self.get_play_verb(namshub_string)
         namshub_resource = self.get_play_uri(namshub_string)
         if namshub_verb == "DELETE":
             print(
-                self.do_api_delete(self.get_play_uri(namshub_resource), namshub_object)
+                self.do_api_delete(
+                    self.apply_template(
+                        self.get_play_uri(namshub_resource), namshub_variables
+                    )
+                )
             )
         elif namshub_verb == "GET":
-            print(self.do_api_get(self.get_play_uri(namshub_resource), namshub_object))
+            print(
+                self.do_api_get(self.get_play_uri(namshub_resource), namshub_variables)
+            )
 
     @dispatch(str, str, str)
-    def namshub(self, namshub_string, namshub_object, namshub_body):
+    def namshub(self, namshub_string, namshub_variables, namshub_body):
         namshub_verb = self.get_play_verb(namshub_string)
         namshub_resource = self.get_play_uri(namshub_string)
         if self.get_play_requiresbody(namshub_resource) is True:
             if namshub_verb == "POST":
                 print(
                     self.do_api_post(
-                        self.get_play_uri(namshub_resource), namshub_object
+                        self.apply_template(
+                            self.get_play_uri(namshub_resource), namshub_variables
+                        )
                     )
                 )
             elif namshub_verb == "PATCH":
                 print(
                     self.do_api_post(
-                        self.get_play_uri(namshub_resource), namshub_object
+                        self.get_play_uri(namshub_resource), namshub_variables
                     )
                 )
         else:
             exit("Function doesn't require a body, but the method used does!")
+
+    def apply_template(self, apply_template_template, apply_template_variables):
+        j2template = Environment(loader=BaseLoader).from_string(apply_template_template)
+        return j2template.render(apply_template_variables)
 
     def get_http_error_code(self, get_http_error_code_code):
         return json.dumps(self.cogitation_errors[get_http_error_code_code], indent=4)

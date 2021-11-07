@@ -18,7 +18,8 @@
 			"uri": "/api/v1/cluster/api-certificate",
 			"description": "Read cluster certificate ID",
 			"method": "GET",
-			"requiresbody": false
+			"requiresbody": false,
+			"variables": []
 		}
 	},
 	"errors": {
