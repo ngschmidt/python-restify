@@ -14,16 +14,6 @@ from RuminatingCogitation import Settings
 from RuminatingCogitation import Reliquary
 
 
-def load_json(filename):
-    # Load Settings from JSON
-    try:
-        with open(filename, "r") as json_filehandle:
-            return json.load(json_filehandle)
-    except Exception as e:
-        print("E0000: Error Loading Settings File: " + str(e))
-        exit()
-
-
 play_help = (
     "Play to execute, Example: delete_do-things_<uuid>. \r\n"
     + "Other options: `list_plays`, or `create_settings` to build a settings file."
@@ -51,8 +41,8 @@ if args.play == "list_plays":
 
 # Provide an "overloading interface"
 if not args.p and not args.vars:
-    cogitation_interface.namshub(args.play, "")
+    cogitation_interface.namshub(args.play)
 elif args.p and args.vars:
-    cogitation_interface.namshub(args.play, load_json(args.vars), load_json(args.p))
+    cogitation_interface.namshub(args.play, namshub_variables=args.vars, namshub_payload=args.p)
 elif args.p:
-    cogitation_interface.namshub(args.play, load_json(args.vars))
+    cogitation_interface.namshub(args.play, namshub_variables=args.vars)

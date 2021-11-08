@@ -12,9 +12,6 @@ from django.core.validators import URLValidator
 # JSON is how we import/export just about everything here...
 import json
 
-# Method Overloading via decorator
-from multipledispatch import dispatch
-
 # Templates - use these to apply variables to URIs
 from jinja2 import Environment, BaseLoader
 
@@ -244,51 +241,47 @@ class Reliquary:
             print("E1002: Unhandled Requests exception! " + str(e))
             exit()
 
-    # We have to overload to facilitate variables in the namshub.
-    # The first situation assumes no variables or body
-    @dispatch(str)
-    def namshub(self, namshub_string):
-        namshub_verb = self.get_play_verb(namshub_string)
-        namshub_resource = self.get_play_uri(namshub_string)
-        if namshub_verb == "DELETE":
-            print(
-                self.do_api_delete(
-                    self.get_play_uri(namshub_resource)
-                )
-            )
-        elif namshub_verb == "GET":
-            print(
-                self.do_api_get(
-                    self.get_play_uri(namshub_resource)
-                )
-            )
-
-    @dispatch(str, str)
-    def namshub(self, namshub_string, namshub_variables):
+    # Executor of the API calls. Takes optional arguments (variables, payload)
+    def namshub(self, namshub_string, namshub_variables=None, namshub_payload=None):
         namshub_verb = self.get_play_verb(namshub_string)
         namshub_resource = self.get_play_uri(namshub_string)
         if self.get_play_requiresvariables(namshub_string) and not namshub_variables:
             exit(
                 "Error: Variables required by play, but not provided! Specify as a JSON dictionary with `--vars`"
             )
-        if namshub_verb == "DELETE":
-            print(
-                self.do_api_delete(
-                    self.apply_template(
-                        self.get_play_uri(namshub_resource), namshub_variables
+        if self.get_play_requiresbody(namshub_string) and not namshub_payload:
+            exit(
+                "Error: Payload required by play, but not provided! Specify as a JSON dictionary with `-b`"
+            )
+        else:
+            namshub_payload = self.get_json_file(namshub_payload)
+        if not namshub_variables and not namshub_payload:
+            if namshub_verb == "DELETE":
+                print(
+                    self.do_api_delete(
+                        namshub_resource
                     )
                 )
-            )
-        elif namshub_verb == "GET":
-            print(
-                self.do_api_get(self.get_play_uri(namshub_resource), namshub_variables)
-            )
-
-    @dispatch(str, str, str)
-    def namshub(self, namshub_string, namshub_variables, namshub_body):
-        namshub_verb = self.get_play_verb(namshub_string)
-        namshub_resource = self.get_play_uri(namshub_string)
-        if self.get_play_requiresbody(namshub_resource) is True:
+            elif namshub_verb == "GET":
+                print(
+                    self.do_api_get(
+                        namshub_resource
+                    )
+                )
+        elif namshub_variables and not namshub_payload:
+            if namshub_verb == "DELETE":
+                print(
+                    self.do_api_delete(
+                        self.apply_template(
+                            namshub_resource, namshub_variables
+                        )
+                    )
+                )
+            elif namshub_verb == "GET":
+                print(
+                    self.do_api_get(namshub_resource, namshub_variables)
+                )
+        elif namshub_variables and namshub_payload:
             if namshub_verb == "POST":
                 print(
                     self.do_api_post(
@@ -299,12 +292,23 @@ class Reliquary:
                 )
             elif namshub_verb == "PATCH":
                 print(
-                    self.do_api_post(
+                    self.do_api_patch(
                         self.get_play_uri(namshub_resource), namshub_variables
                     )
                 )
-        else:
-            exit("Function doesn't require a body, but the method used does!")
+        elif namshub_payload and not namshub_variables:
+            if namshub_verb == "POST":
+                print(
+                    self.do_api_post(
+                        namshub_resource, namshub_payload
+                    )
+                )
+            elif namshub_verb == "PATCH":
+                print(
+                    self.do_api_patch(
+                        self.get_play_uri(namshub_resource), namshub_variables
+                    )
+                )
 
     def apply_template(self, apply_template_template, apply_template_variables):
         j2template = Environment(loader=BaseLoader).from_string(apply_template_template)
@@ -345,3 +349,13 @@ class Reliquary:
             return self.cogitation_bibliotheca[get_play_name]["requiresbody"]
         except:
             return False
+
+    def get_json_file(filename):
+        # Load Settings from JSON
+        try:
+            with open(filename, "r") as json_filehandle:
+                return json.load(json_filehandle)
+        except Exception as e:
+            print("E0000: Error Loading Settings File: " + str(e))
+            exit()
+
