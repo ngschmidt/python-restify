@@ -1,8 +1,6 @@
 {
 	"settings": {
 		"authentication": {
-			"username": "admin",
-			"password": "password",
 			"method": "basic",
 			"certificate": "",
 			"key": ""
