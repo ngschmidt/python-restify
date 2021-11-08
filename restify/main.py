@@ -18,8 +18,8 @@ from RuminatingCogitation import Reliquary
 # APIPASS = Password
 import os
 
-api_user = os.getenv('APIUSER')
-api_pass = os.getenv('APIPASS')
+api_user = os.getenv("APIUSER")
+api_pass = os.getenv("APIPASS")
 
 play_help = (
     "Play to execute, Example: delete_do-things_<uuid>. \r\n"
@@ -50,6 +50,8 @@ if args.play == "list_plays":
 if not args.p and not args.vars:
     cogitation_interface.namshub(args.play)
 elif args.p and args.vars:
-    cogitation_interface.namshub(args.play, namshub_variables=args.vars, namshub_payload=args.p)
+    cogitation_interface.namshub(
+        args.play, namshub_variables=args.vars, namshub_payload=args.p
+    )
 elif args.p:
     cogitation_interface.namshub(args.play, namshub_variables=args.vars)

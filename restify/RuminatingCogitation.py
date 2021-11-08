@@ -253,30 +253,18 @@ class Reliquary:
             namshub_payload = self.get_json_file(namshub_payload)
         if not namshub_variables and not namshub_payload:
             if namshub_verb == "DELETE":
-                print(
-                    self.do_api_delete(
-                        namshub_resource
-                    )
-                )
+                print(self.do_api_delete(namshub_resource))
             elif namshub_verb == "GET":
-                print(
-                    self.do_api_get(
-                        namshub_resource
-                    )
-                )
+                print(self.do_api_get(namshub_resource))
         elif namshub_variables and not namshub_payload:
             if namshub_verb == "DELETE":
                 print(
                     self.do_api_delete(
-                        self.apply_template(
-                            namshub_resource, namshub_variables
-                        )
+                        self.apply_template(namshub_resource, namshub_variables)
                     )
                 )
             elif namshub_verb == "GET":
-                print(
-                    self.do_api_get(namshub_resource, namshub_variables)
-                )
+                print(self.do_api_get(namshub_resource, namshub_variables))
         elif namshub_variables and namshub_payload:
             if namshub_verb == "POST":
                 print(
@@ -294,11 +282,7 @@ class Reliquary:
                 )
         elif namshub_payload and not namshub_variables:
             if namshub_verb == "POST":
-                print(
-                    self.do_api_post(
-                        namshub_resource, namshub_payload
-                    )
-                )
+                print(self.do_api_post(namshub_resource, namshub_payload))
             elif namshub_verb == "PATCH":
                 print(
                     self.do_api_patch(
