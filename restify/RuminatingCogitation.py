@@ -109,7 +109,7 @@ class Reliquary:
     cogitation_errors = {}
 
     # We're pretty much picking up our configuration data
-    def __init__(self, input_settings):
+    def __init__(self, input_settings, input_user=None, input_pass=None):
 
         # Load Settings from JSON
         try:
@@ -128,12 +128,8 @@ class Reliquary:
                 "validation"
             ]
             # Authentication Settings
-            self.cogitation_username = json_settings["settings"]["authentication"][
-                "username"
-            ]
-            self.cogitation_password = json_settings["settings"]["authentication"][
-                "password"
-            ]
+            self.cogitation_username = input_user
+            self.cogitation_password = input_pass
             self.cogitation_authcert = json_settings["settings"]["authentication"][
                 "certificate"
             ]
@@ -358,4 +354,3 @@ class Reliquary:
         except Exception as e:
             print("E0000: Error Loading Settings File " + filename + ": " + str(e))
             exit()
-

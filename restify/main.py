@@ -13,6 +13,13 @@ import json
 from RuminatingCogitation import Settings
 from RuminatingCogitation import Reliquary
 
+# Import OS - let's use this for passwords and usernames
+# APIUSER = Username
+# APIPASS = Password
+import os
+
+api_user = os.getenv('APIUSER')
+api_pass = os.getenv('APIPASS')
 
 play_help = (
     "Play to execute, Example: delete_do-things_<uuid>. \r\n"
