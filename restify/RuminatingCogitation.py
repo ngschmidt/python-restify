@@ -255,7 +255,7 @@ class Reliquary:
         # If a payload is required and present, load it from the file before proceeding
         elif namshub_payload:
             namshub_payload = self.get_json_file(namshub_payload)
-        
+
         # Simplest first. Let's try the edition that doesn't need templating first
         if not namshub_variables:
             if namshub_payload:
