@@ -251,44 +251,47 @@ class Reliquary:
             )
         elif namshub_payload:
             namshub_payload = self.get_json_file(namshub_payload)
-        if not namshub_variables and not namshub_payload:
-            if namshub_verb == "DELETE":
-                print(self.do_api_delete(namshub_resource))
-            elif namshub_verb == "GET":
-                print(self.do_api_get(namshub_resource))
-        elif namshub_variables and not namshub_payload:
-            if namshub_verb == "DELETE":
-                print(
-                    self.do_api_delete(
-                        self.apply_template(namshub_resource, namshub_variables)
-                    )
-                )
-            elif namshub_verb == "GET":
-                print(self.do_api_get(namshub_resource, namshub_variables))
-        elif namshub_variables and namshub_payload:
-            if namshub_verb == "POST":
-                print(
-                    self.do_api_post(
-                        self.apply_template(
+        if not namshub_variables:
+            if namshub_payload:
+                if namshub_verb == "POST":
+                    print(self.do_api_post(namshub_resource, namshub_payload))
+                elif namshub_verb == "PATCH":
+                    print(
+                        self.do_api_patch(
                             self.get_play_uri(namshub_resource), namshub_variables
                         )
                     )
-                )
-            elif namshub_verb == "PATCH":
-                print(
-                    self.do_api_patch(
-                        self.get_play_uri(namshub_resource), namshub_variables
+            else:
+                if namshub_verb == "DELETE":
+                    print(self.do_api_delete(namshub_resource))
+                elif namshub_verb == "GET":
+                    print(self.do_api_get(namshub_resource))
+        elif namshub_variables:
+            if namshub_payload:
+                if namshub_verb == "POST":
+                    print(
+                        self.do_api_post(
+                            self.apply_template(
+                                self.get_play_uri(namshub_resource), namshub_variables
+                            )
+                        )
                     )
-                )
-        elif namshub_payload and not namshub_variables:
-            if namshub_verb == "POST":
-                print(self.do_api_post(namshub_resource, namshub_payload))
-            elif namshub_verb == "PATCH":
-                print(
-                    self.do_api_patch(
-                        self.get_play_uri(namshub_resource), namshub_variables
+                elif namshub_verb == "PATCH":
+                    print(
+                        self.do_api_patch(
+                            self.get_play_uri(namshub_resource), namshub_variables
+                        )
                     )
-                )
+            else:
+                if namshub_verb == "DELETE":
+                    print(
+                        self.do_api_delete(
+                            self.apply_template(namshub_resource, namshub_variables)
+                        )
+                    )
+                elif namshub_verb == "GET":
+                    print(self.do_api_get(namshub_resource, namshub_variables))
+
 
     def apply_template(self, apply_template_template, apply_template_variables):
         j2template = Environment(loader=BaseLoader).from_string(apply_template_template)
