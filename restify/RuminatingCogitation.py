@@ -241,6 +241,9 @@ class Reliquary:
     def namshub(self, namshub_string, namshub_variables=False, namshub_payload=False):
         namshub_verb = self.get_play_verb(namshub_string)
         namshub_resource = self.get_play_uri(namshub_string)
+
+        # Test to see if either variables or payloads are required
+        # If they're required and not present, don't proceed
         if self.get_play_requiresvariables(namshub_string) and not namshub_variables:
             exit(
                 "Error: Variables required by play, but not provided! Specify as a JSON dictionary with `--vars`"
@@ -249,8 +252,11 @@ class Reliquary:
             exit(
                 "Error: Payload required by play, but not provided! Specify as a JSON dictionary with `-b`"
             )
+        # If a payload is required and present, load it from the file before proceeding
         elif namshub_payload:
             namshub_payload = self.get_json_file(namshub_payload)
+        
+        # Simplest first. Let's try the edition that doesn't need templating first
         if not namshub_variables:
             if namshub_payload:
                 if namshub_verb == "POST":
@@ -266,6 +272,8 @@ class Reliquary:
                     print(self.do_api_delete(namshub_resource))
                 elif namshub_verb == "GET":
                     print(self.do_api_get(namshub_resource))
+
+        # This edition will leverage J2 templating to translate any URI variables
         elif namshub_variables:
             if namshub_payload:
                 if namshub_verb == "POST":
@@ -291,7 +299,6 @@ class Reliquary:
                     )
                 elif namshub_verb == "GET":
                     print(self.do_api_get(namshub_resource, namshub_variables))
-
 
     def apply_template(self, apply_template_template, apply_template_variables):
         j2template = Environment(loader=BaseLoader).from_string(apply_template_template)
