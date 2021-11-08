@@ -242,7 +242,7 @@ class Reliquary:
             exit()
 
     # Executor of the API calls. Takes optional arguments (variables, payload)
-    def namshub(self, namshub_string, namshub_variables=None, namshub_payload=None):
+    def namshub(self, namshub_string, namshub_variables=False, namshub_payload=False):
         namshub_verb = self.get_play_verb(namshub_string)
         namshub_resource = self.get_play_uri(namshub_string)
         if self.get_play_requiresvariables(namshub_string) and not namshub_variables:
@@ -253,7 +253,7 @@ class Reliquary:
             exit(
                 "Error: Payload required by play, but not provided! Specify as a JSON dictionary with `-b`"
             )
-        else:
+        elif namshub_payload:
             namshub_payload = self.get_json_file(namshub_payload)
         if not namshub_variables and not namshub_payload:
             if namshub_verb == "DELETE":
@@ -350,12 +350,12 @@ class Reliquary:
         except:
             return False
 
-    def get_json_file(filename):
+    def get_json_file(self, filename):
         # Load Settings from JSON
         try:
             with open(filename, "r") as json_filehandle:
                 return json.load(json_filehandle)
         except Exception as e:
-            print("E0000: Error Loading Settings File: " + str(e))
+            print("E0000: Error Loading Settings File " + filename + ": " + str(e))
             exit()
 
