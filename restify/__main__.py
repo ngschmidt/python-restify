@@ -10,8 +10,16 @@ import argparse
 import json
 
 # Import Restify Library
-from restify.RuminatingCogitation import Settings
-from restify.RuminatingCogitation import Reliquary
+from RuminatingCogitation import Settings
+from RuminatingCogitation import Reliquary
+
+# Import OS - let's use this for passwords and usernames
+# APIUSER = Username
+# APIPASS = Password
+import os
+
+api_user = os.getenv("APIUSER")
+api_pass = os.getenv("APIPASS")
 
 play_help = (
     "Play to execute, Example: delete_do-things_<uuid>. \r\n"
@@ -19,8 +27,12 @@ play_help = (
 )
 # Arguments Parsing
 parser = argparse.ArgumentParser(description="Fetch via API")
-parser.add_argument("-f", help="REST Settings File")
 parser.add_argument("play", help=play_help)
+parser.add_argument("-f", help="REST Settings File (JSON)")
+parser.add_argument("-p", help="Payload (body) File (JSON)")
+parser.add_argument(
+    "--vars", help="Variables to pass (JSON). For more detail, use list_plays"
+)
 args = parser.parse_args()
 
 if args.play == "create_settings":
@@ -34,5 +46,12 @@ if args.play == "list_plays":
     print(json.dumps(cogitation_interface.cogitation_bibliotheca, indent=4))
     exit()
 
-# The play construct demonstrated above is a nam-shub, or `<verb>_<endpoint>_<object>` format. We'll use this to decide what to do, split by a dash
-cogitation_interface.namshub(args.play)
+# Provide an "overloading interface"
+if not args.p and not args.vars:
+    cogitation_interface.namshub(args.play)
+elif args.p and args.vars:
+    cogitation_interface.namshub(
+        args.play, namshub_variables=args.vars, namshub_payload=args.p
+    )
+elif args.p:
+    cogitation_interface.namshub(args.play, namshub_variables=args.vars)
