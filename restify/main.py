@@ -35,13 +35,16 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
+# Dump a settings file on demand
 if args.play == "create_settings":
     template = Settings()
     print(template.get_settings_json())
     exit()
 
-cogitation_interface = Reliquary(args.f)
+# Set the interface - apply from variables no matter what
+cogitation_interface = Reliquary(args.f, input_user=api_user, input_pass=api_pass)
 
+# Once the library is fired up and settings are loaded, offer the option to list any plays in the settings file
 if args.play == "list_plays":
     print(json.dumps(cogitation_interface.cogitation_bibliotheca, indent=4))
     exit()
