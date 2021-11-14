@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Error handling improvements everywhere.
+- Look for username and password from system args instead of storing passwords in the file
 
 ## [06-Mar-2021] v0.1.5
 
