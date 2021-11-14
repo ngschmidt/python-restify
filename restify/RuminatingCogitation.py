@@ -210,7 +210,6 @@ class Reliquary:
             )
             # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
             response_code = do_api_get_r.status_code
-            print(response_code)
             do_api_get_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
             return do_api_get_r.text  # if HTTP status is good, save response
         except requests.Timeout:
@@ -237,10 +236,14 @@ class Reliquary:
             print("E1002: Unhandled Requests exception! " + str(e))
             exit()
 
-    # Executor of the API calls. Takes optional arguments (variables, payload)
+    # Executor of the API calls.
+    # Takes optional arguments (variables, payload) depending on which method is used
     def namshub(self, namshub_string, namshub_variables=False, namshub_payload=False):
-        namshub_verb = self.get_play_verb(namshub_string)
+        # Sanitize the verb used to uppercase, fewer changes for mixup
+        namshub_verb = self.get_play_verb(namshub_string).lower().upper()
+        # URI is in JSON file
         namshub_resource = self.get_play_uri(namshub_string)
+        # Grab the namshub payload from the json file, if it exists
 
         # Test to see if either variables or payloads are required
         # If they're required and not present, don't proceed
@@ -300,6 +303,7 @@ class Reliquary:
                 elif namshub_verb == "GET":
                     print(self.do_api_get(namshub_resource, namshub_variables))
 
+    # One-shot to apply templates to a given object string
     def apply_template(self, apply_template_template, apply_template_variables):
         j2template = Environment(loader=BaseLoader).from_string(apply_template_template)
         return j2template.render(apply_template_variables)
@@ -314,31 +318,62 @@ class Reliquary:
             exit(str(e))
 
     def get_http_error_code(self, get_http_error_code_code):
-        return json.dumps(self.cogitation_errors[get_http_error_code_code], indent=4)
+        get_http_error_code_code = str(get_http_error_code_code)
+        try:
+            return json.dumps(
+                self.cogitation_errors[get_http_error_code_code], indent=4
+            )
+        except KeyError:
+            exit("Unknown HTTP Error Code: " + str(get_http_error_code_code) + " ")
+        except Exception as e:
+            exit("Exception fetching HTTP Error code" + str(e))
 
+    # Fetch the URI for a given api call
+    # Crash if it's not found
     def get_play_uri(self, get_play_name):
         try:
             return self.cogitation_bibliotheca[get_play_name]["uri"]
         except Exception as e:
             exit("Exception fetching play URI: " + str(get_play_name) + str(e))
 
+    # Return JSON string from `dict` payload for a given api call if successful
+    # If not, return false and don't crash if a KeyError is returned
+    # This object has no value as a `dict`, because its sent to a REST endpoint directly
+    def get_play_payload(self, get_play_name):
+        try:
+            return json.dumps(
+                self.cogitation_bibliotheca[get_play_name]["payload"], indent=4
+            )
+        except KeyError:
+            return False
+        except Exception as e:
+            exit("Exception fetching play requirement: " + str(get_play_name) + str(e))
+
+    # Fetch what RESTful verb is to be used for a given api call
+    # Crash if it's not found
     def get_play_verb(self, get_play_name):
         try:
             return self.cogitation_bibliotheca[get_play_name]["method"]
         except Exception as e:
             exit("Exception fetching play method: " + str(get_play_name) + str(e))
 
+    # Fetch whether or not an api call requires a file payload
     def get_play_requiresbody(self, get_play_name):
         try:
             return self.cogitation_bibliotheca[get_play_name]["requiresbody"]
+        except KeyError:
+            return False
         except Exception as e:
             exit("Exception fetching play requirement: " + str(get_play_name) + str(e))
 
+    # Fetch whether or not an api call requires variables
     def get_play_requiresvariables(self, get_play_name):
         try:
-            return self.cogitation_bibliotheca[get_play_name]["requiresbody"]
-        except:
+            return self.cogitation_bibliotheca[get_play_name]["requiresvariables"]
+        except KeyError:
             return False
+        except Exception as e:
+            exit("Exception fetching play requirement: " + str(get_play_name) + str(e))
 
     def get_json_file(self, filename):
         # Load Settings from JSON
