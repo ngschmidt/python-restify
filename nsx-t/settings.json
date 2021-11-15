@@ -19,6 +19,15 @@
 			"requiresbody": false,
 			"requiresvariables": false,
 			"variables": {}
+		},
+		"get_cluster_certificate": {
+			"uri": "/policy/api/v1/infra/certificates/{{ id }}",
+			"description": "Read Certificate (requires ID variable",
+			"method": "GET",
+			"requiresvariables": false,
+			"variables": { 
+				"id": false
+			}
 		}
 	},
 	"errors": {
