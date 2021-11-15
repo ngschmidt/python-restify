@@ -238,12 +238,13 @@ class Reliquary:
 
     # Executor of the API calls.
     # Takes optional arguments (variables, payload) depending on which method is used
-    def namshub(self, namshub_string, namshub_variables=False, namshub_payload=False):
+    def namshub(self, namshub_string, namshub_variables=False):
         # Sanitize the verb used to uppercase, fewer changes for mixup
         namshub_verb = self.get_play_verb(namshub_string).lower().upper()
         # URI is in JSON file
         namshub_resource = self.get_play_uri(namshub_string)
         # Grab the namshub payload from the json file, if it exists
+        namshub_payload = self.get_play_payload(namshub_string)
 
         # Test to see if either variables or payloads are required
         # If they're required and not present, don't proceed

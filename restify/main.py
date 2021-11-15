@@ -29,7 +29,6 @@ play_help = (
 parser = argparse.ArgumentParser(description="Fetch via API")
 parser.add_argument("play", help=play_help)
 parser.add_argument("-f", help="REST Settings File (JSON)")
-parser.add_argument("-p", help="Payload (body) File (JSON)")
 parser.add_argument(
     "--vars", help="Variables to pass (JSON). For more detail, use list_plays"
 )
@@ -55,11 +54,7 @@ if args.get:
     exit()
 
 # Provide an "overloading interface"
-if not args.p and not args.vars:
+if not args.vars:
     cogitation_interface.namshub(args.play)
-elif args.p and args.vars:
-    cogitation_interface.namshub(
-        args.play, namshub_variables=args.vars, namshub_payload=args.p
-    )
-elif args.p:
+else:
     cogitation_interface.namshub(args.play, namshub_variables=args.vars)
