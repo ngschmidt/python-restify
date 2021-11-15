@@ -32,7 +32,16 @@ parser.add_argument("-f", help="REST Settings File (JSON)")
 parser.add_argument(
     "--vars", help="Variables to pass (JSON). For more detail, use list_plays"
 )
-parser.add_argument("--get", help="Instead of running the command, print it out", action="store_true")
+parser.add_argument(
+    "--getplay",
+    help="Instead of running the command, print it out",
+    action="store_true",
+)
+parser.add_argument(
+    "--dryrun",
+    help="Instead of running the command, print out the payload",
+    action="store_true",
+)
 args = parser.parse_args()
 
 # Dump a settings file on demand
@@ -47,14 +56,19 @@ cogitation_interface = Reliquary(args.f, input_user=api_user, input_pass=api_pas
 # Once the library is fired up and settings are loaded, offer the option to list any plays in the settings file
 if args.play == "list_plays":
     print(json.dumps(cogitation_interface.cogitation_bibliotheca, indent=4))
-    exit()
-
-if args.get:
-    print(json.dumps(cogitation_interface.cogitation_bibliotheca[args.play], indent=4))
-    exit()
-
-# Provide an "overloading interface"
-if not args.vars:
-    cogitation_interface.namshub(args.play)
+elif args.getplay or args.dryrun:
+    if args.getplay:
+        print(
+            json.dumps(cogitation_interface.cogitation_bibliotheca[args.play], indent=4)
+        )
+    if args.dryrun:
+        if not args.vars:
+            cogitation_interface.namshub(args.play, namshub_dryrun=True)
+        else:
+            cogitation_interface.namshub(args.play, namshub_variables=args.vars, namshub_dryrun=True)
 else:
-    cogitation_interface.namshub(args.play, namshub_variables=args.vars)
+    # Provide an "overloading interface"
+    if not args.vars:
+        cogitation_interface.namshub(args.play)
+    else:
+        cogitation_interface.namshub(args.play, namshub_variables=args.vars)

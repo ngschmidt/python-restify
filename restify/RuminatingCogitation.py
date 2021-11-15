@@ -148,7 +148,7 @@ class Reliquary:
     # Functions
 
     # Do API DELETE, using basic credentials
-    def do_api_delete(self, do_api_uri):
+    def do_api_delete(self, do_api_uri, do_api_dryrun=False):
         # Perform API Processing - conditional basic authentication
         try:
             do_api_delete_headers = {
@@ -157,17 +157,28 @@ class Reliquary:
             }
             do_api_delete_url = self.cogitation_endpoint + do_api_uri
             self.validate_url(do_api_delete_url)
-            do_api_delete_r = requests.delete(
-                do_api_delete_url,
-                headers=do_api_delete_headers,
-                verify=self.cogitation_certvalidation,
-                auth=(self.cogitation_username, self.cogitation_password),
-            )
-            # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
-            response_code = do_api_delete_r.status_code
-            print(response_code)
-            do_api_delete_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
-            return do_api_delete_r.text  # if HTTP status is good, save response
+            if not do_api_dryrun:
+                do_api_delete_r = requests.delete(
+                    do_api_delete_url,
+                    headers=do_api_delete_headers,
+                    verify=self.cogitation_certvalidation,
+                    auth=(self.cogitation_username, self.cogitation_password),
+                )
+                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
+                response_code = do_api_delete_r.status_code
+                print(response_code)
+                do_api_delete_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
+                return do_api_delete_r.text  # if HTTP status is good, save response
+            else:
+                print(
+                    json.dumps(
+                        {
+                            "do_api_get_headers": do_api_delete_headers,
+                            "do_api_get_url": do_api_delete_url
+                        },
+                        indent=4
+                    )
+                )
         except requests.Timeout:
             print("E1000: API Connection timeout!")
         except requests.ConnectionError as connection_error:
@@ -193,7 +204,7 @@ class Reliquary:
             exit()
 
     # Do API GET, using basic credentials
-    def do_api_get(self, do_api_uri):
+    def do_api_get(self, do_api_uri, do_api_dryrun=False):
         # Perform API Processing - conditional basic authentication
         try:
             do_api_get_headers = {
@@ -202,16 +213,27 @@ class Reliquary:
             }
             do_api_get_url = self.cogitation_endpoint + do_api_uri
             self.validate_url(do_api_get_url)
-            do_api_get_r = requests.get(
-                do_api_get_url,
-                headers=do_api_get_headers,
-                verify=self.cogitation_certvalidation,
-                auth=(self.cogitation_username, self.cogitation_password),
-            )
-            # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
-            response_code = do_api_get_r.status_code
-            do_api_get_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
-            return do_api_get_r.text  # if HTTP status is good, save response
+            if not do_api_dryrun:
+                do_api_get_r = requests.get(
+                    do_api_get_url,
+                    headers=do_api_get_headers,
+                    verify=self.cogitation_certvalidation,
+                    auth=(self.cogitation_username, self.cogitation_password),
+                )
+                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
+                response_code = do_api_get_r.status_code
+                do_api_get_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
+                return do_api_get_r.text  # if HTTP status is good, save response
+            else:
+                print(
+                    json.dumps(
+                        {
+                            "do_api_get_headers": do_api_get_headers,
+                            "do_api_get_url": do_api_get_url
+                        },
+                        indent=4
+                    )
+                )
         except requests.Timeout:
             print("E1000: API Connection timeout!")
         except requests.ConnectionError as connection_error:
@@ -238,7 +260,7 @@ class Reliquary:
 
     # Executor of the API calls.
     # Takes optional arguments (variables, payload) depending on which method is used
-    def namshub(self, namshub_string, namshub_variables=False):
+    def namshub(self, namshub_string, namshub_variables=False, namshub_dryrun=False):
         # Sanitize the verb used to uppercase, fewer changes for mixup
         namshub_verb = self.get_play_verb(namshub_string).lower().upper()
         # URI is in JSON file
@@ -275,7 +297,9 @@ class Reliquary:
                 if namshub_verb == "DELETE":
                     print(self.do_api_delete(namshub_resource))
                 elif namshub_verb == "GET":
-                    print(self.do_api_get(namshub_resource))
+                    print(
+                        self.do_api_get(namshub_resource, do_api_dryrun=namshub_dryrun)
+                    )
 
         # This edition will leverage J2 templating to translate any URI variables
         elif namshub_variables:
@@ -302,7 +326,13 @@ class Reliquary:
                         )
                     )
                 elif namshub_verb == "GET":
-                    print(self.do_api_get(namshub_resource, namshub_variables))
+                    print(
+                        self.do_api_get(
+                            namshub_resource,
+                            namshub_variables,
+                            do_api_dryrun=namshub_dryrun,
+                        )
+                    )
 
     # One-shot to apply templates to a given object string
     def apply_template(self, apply_template_template, apply_template_variables):

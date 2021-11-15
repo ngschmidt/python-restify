@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `POST` verb
 - `PATCH` verb
+- Dry Run Capability
 - Overloading to support a message body
 
 ### Changed
