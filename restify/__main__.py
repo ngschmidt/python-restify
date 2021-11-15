@@ -10,8 +10,8 @@ import argparse
 import json
 
 # Import Restify Library
-from RuminatingCogitation import Settings
-from RuminatingCogitation import Reliquary
+from restify.RuminatingCogitation import Settings
+from restify.RuminatingCogitation import Reliquary
 
 # Import OS - let's use this for passwords and usernames
 # APIUSER = Username
