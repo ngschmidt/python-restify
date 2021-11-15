@@ -288,11 +288,7 @@ class Reliquary:
                 if namshub_verb == "POST":
                     print(self.do_api_post(namshub_resource, namshub_payload))
                 elif namshub_verb == "PATCH":
-                    print(
-                        self.do_api_patch(
-                            self.get_play_uri(namshub_resource), namshub_variables
-                        )
-                    )
+                    print(self.do_api_patch(self.get_play_uri(namshub_resource)))
             else:
                 if namshub_verb == "DELETE":
                     print(self.do_api_delete(namshub_resource))
@@ -328,8 +324,7 @@ class Reliquary:
                 elif namshub_verb == "GET":
                     print(
                         self.do_api_get(
-                            namshub_resource,
-                            namshub_variables,
+                            self.apply_template(namshub_resource, namshub_variables),
                             do_api_dryrun=namshub_dryrun,
                         )
                     )
