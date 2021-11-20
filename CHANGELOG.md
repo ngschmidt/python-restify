@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Payload and URI templating
 - `json` `file` or `string` function
 
+### Changed
+
+- Headers moved to settings file as a required attribute instead of hard-coding
+
 ## [07-Nov-2021] v0.1.6
 
 ### Added

@@ -30,6 +30,10 @@ class Settings:
                 "certificate": "",
                 "key": "",
             },
+            "headers": {
+                "content-type": "application/json",
+                "X-Allow-Overwrite": "true",
+            },
             "tls": {"validation": False},
             "verbosity": 1,
             "endpoint": "https://nsx.lab.engyak.net",
@@ -107,6 +111,7 @@ class Reliquary:
     cogitation_password = ""
     cogitation_authkey = ""
     cogitation_authcert = ""
+    cogitation_headers = ""
     cogitation_endpoint = ""
     cogitation_bibliotheca = {}
     cogitation_errors = {}
@@ -138,6 +143,7 @@ class Reliquary:
             ]
             self.cogitation_authkey = json_settings["settings"]["authentication"]["key"]
             # Load Known API Actions
+            self.cogitation_headers = json_settings["settings"]["headers"]
             self.cogitation_bibliotheca = json_settings["plays"]
             # Load HTTP Errors
             self.cogitation_errors = json_settings["errors"]
@@ -154,16 +160,12 @@ class Reliquary:
     def do_api_delete(self, do_api_uri, do_api_dryrun=False):
         # Perform API Processing - conditional basic authentication
         try:
-            do_api_delete_headers = {
-                "content-type": "application/json",
-                "X-Allow-Overwrite": "true",
-            }
             do_api_delete_url = self.cogitation_endpoint + do_api_uri
             self.validate_url(do_api_delete_url)
             if not do_api_dryrun:
                 do_api_delete_r = requests.delete(
                     do_api_delete_url,
-                    headers=do_api_delete_headers,
+                    headers=self.cogitation_headers,
                     verify=self.cogitation_certvalidation,
                     auth=(self.cogitation_username, self.cogitation_password),
                 )
@@ -176,7 +178,7 @@ class Reliquary:
                 print(
                     json.dumps(
                         {
-                            "do_api_get_headers": do_api_delete_headers,
+                            "do_api_get_headers": self.cogitation_headers,
                             "do_api_get_url": do_api_delete_url,
                         },
                         indent=4,
@@ -210,16 +212,12 @@ class Reliquary:
     def do_api_get(self, do_api_uri, do_api_dryrun=False):
         # Perform API Processing - conditional basic authentication
         try:
-            do_api_get_headers = {
-                "content-type": "application/json",
-                "X-Allow-Overwrite": "true",
-            }
             do_api_get_url = self.cogitation_endpoint + do_api_uri
             self.validate_url(do_api_get_url)
             if not do_api_dryrun:
                 do_api_get_r = requests.get(
                     do_api_get_url,
-                    headers=do_api_get_headers,
+                    headers=self.cogitation_headers,
                     verify=self.cogitation_certvalidation,
                     auth=(self.cogitation_username, self.cogitation_password),
                 )
@@ -231,7 +229,7 @@ class Reliquary:
                 print(
                     json.dumps(
                         {
-                            "do_api_get_headers": do_api_get_headers,
+                            "do_api_get_headers": self.cogitation_headers,
                             "do_api_get_url": do_api_get_url,
                         },
                         indent=4,
@@ -267,17 +265,13 @@ class Reliquary:
     ):
         # Perform API Processing - conditional basic authentication
         try:
-            do_api_headers = {
-                "content-type": "application/json",
-                "X-Allow-Overwrite": "true",
-            }
             do_api_url = self.cogitation_endpoint + do_api_uri
             self.validate_url(do_api_url)
             if not do_api_dryrun:
                 do_api_r = requests.request(
                     do_api_verb,
                     url=do_api_url,
-                    headers=do_api_headers,
+                    headers=self.cogitation_headers,
                     verify=self.cogitation_certvalidation,
                     auth=(self.cogitation_username, self.cogitation_password),
                     payload=do_api_payload,
@@ -290,7 +284,7 @@ class Reliquary:
                 print(
                     json.dumps(
                         {
-                            "do_api_get_headers": do_api_headers,
+                            "do_api_get_headers": self.cogitation_headers,
                             "do_api_get_url": do_api_url,
                             "do_api_verb": do_api_verb,
                             "do_api_payload": do_api_payload

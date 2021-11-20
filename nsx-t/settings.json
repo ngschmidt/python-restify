@@ -9,6 +9,10 @@
 			"validation": false
 		},
 		"verbosity": 1,
+		"headers": {
+			"content-type": "application/json",
+			"X-Allow-Overwrite": "true",
+		},
 		"endpoint": "https://nsx.lab.engyak.net"
 	},
 	"plays": {
