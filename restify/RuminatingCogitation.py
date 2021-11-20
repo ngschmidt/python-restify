@@ -292,6 +292,8 @@ class Reliquary:
                         {
                             "do_api_get_headers": do_api_headers,
                             "do_api_get_url": do_api_url,
+                            "do_api_verb": do_api_verb,
+                            "do_api_payload": do_api_payload
                         },
                         indent=4,
                     )
