@@ -287,7 +287,7 @@ class Reliquary:
                             "do_api_get_headers": self.cogitation_headers,
                             "do_api_get_url": do_api_url,
                             "do_api_verb": do_api_verb,
-                            "do_api_payload": do_api_payload
+                            "do_api_payload": do_api_payload,
                         },
                         indent=4,
                     )
@@ -481,4 +481,6 @@ class Reliquary:
             except Exception as e:
                 if self.cogitation.verbosity:
                     print(str(e))
-                sys.exit("Error: " + input + " is neither a valid JSON string or filename!")
+                sys.exit(
+                    "Error: " + input + " is neither a valid JSON string or filename!"
+                )
