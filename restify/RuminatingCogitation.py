@@ -335,18 +335,18 @@ class Reliquary:
         # Test to see if either variables or payloads are required
         # If they're required and not present, don't proceed
         if self.get_play_requiresvariables(namshub_string) and not namshub_variables:
-            exit(
+            sys.exit(
                 "Error: Variables required by play, but not provided! Specify as a JSON dictionary with `--vars`"
             )
         if self.get_play_requiresbody(namshub_string) and not namshub_payload:
-            exit(
+            sys.exit(
                 "Error: Payload required by play, but not provided! Specify as a JSON dictionary with `-b`"
             )
         # If a payload is required and present, load it from the file before proceeding
         elif namshub_payload:
-            namshub_payload = self.get_json_file(namshub_payload)
+            namshub_payload = self.get_json_file_or_string(namshub_payload)
 
-        # Simplest first. Let's try the edition that doesn't need templating first
+        # Simplest first. Let's try the edition that doesn't need templating
         if not namshub_variables:
             if namshub_verb == "POST" or namshub_verb == "PATCH":
                 print(
@@ -475,3 +475,16 @@ class Reliquary:
         except Exception as e:
             print("E0000: Error Loading Settings File " + filename + ": " + str(e))
             exit()
+
+    def get_json_file_or_string(self, input):
+        try:
+            return json.loads(input)
+        except Exception as e:
+            if self.cogitation_verbosity:
+                print(str(e))
+            try:
+                return self.get_json_file(input)
+            except Exception as e:
+                if self.cogitation.verbosity:
+                    print(str(e))
+                sys.exit("Error: " + input + " is neither a valid JSON string or filename!")

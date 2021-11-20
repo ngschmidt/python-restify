@@ -66,7 +66,7 @@ elif args.getplay or args.dryrun:
             cogitation_interface.namshub(args.play, namshub_dryrun=True)
         else:
             cogitation_interface.namshub(
-                args.play, namshub_variables=json.loads(args.vars), namshub_dryrun=True
+                args.play, namshub_variables=args.vars, namshub_dryrun=True
             )
 else:
     # Provide an "overloading interface"

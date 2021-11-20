@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Generic wrapper (`namshub`)
 - Payload and URI templating
+- `json` `file` or `string` function
 
 ## [07-Nov-2021] v0.1.6
 
@@ -24,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Error handling improvements everywhere.
-- Look for username and password from system args instead of storing passwords in the file
+- Look for username and password from system args instead of storing passwords
 
 ## [06-Mar-2021] v0.1.5
 
