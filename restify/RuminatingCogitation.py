@@ -15,6 +15,9 @@ import json
 # Templates - use these to apply variables to URIs
 from jinja2 import Environment, BaseLoader
 
+# System calls for crashing
+import sys
+
 
 # Begin Supporting Classes
 class Settings:
@@ -174,9 +177,9 @@ class Reliquary:
                     json.dumps(
                         {
                             "do_api_get_headers": do_api_delete_headers,
-                            "do_api_get_url": do_api_delete_url
+                            "do_api_get_url": do_api_delete_url,
                         },
-                        indent=4
+                        indent=4,
                     )
                 )
         except requests.Timeout:
@@ -229,9 +232,9 @@ class Reliquary:
                     json.dumps(
                         {
                             "do_api_get_headers": do_api_get_headers,
-                            "do_api_get_url": do_api_get_url
+                            "do_api_get_url": do_api_get_url,
                         },
-                        indent=4
+                        indent=4,
                     )
                 )
         except requests.Timeout:
@@ -249,6 +252,65 @@ class Reliquary:
                     + self.get_http_error_code(response_code)
                 )
                 return do_api_get_r.text
+            else:
+                print("EA999: Unhandled HTTP Error " + str(response_code) + "!")
+                exit()  # interpet the error, then close out so we don't have to put all the rest of our code in an except statement
+        except requests.RequestException as requests_exception:
+            print(requests_exception)
+        except Exception as e:
+            print("E1002: Unhandled Requests exception! " + str(e))
+            exit()
+
+    # Do API POST, using basic credentials
+    def do_api_pass(
+        self, do_api_uri, do_api_verb="GET", do_api_payload=False, do_api_dryrun=False
+    ):
+        # Perform API Processing - conditional basic authentication
+        try:
+            do_api_headers = {
+                "content-type": "application/json",
+                "X-Allow-Overwrite": "true",
+            }
+            do_api_url = self.cogitation_endpoint + do_api_uri
+            self.validate_url(do_api_url)
+            if not do_api_dryrun:
+                do_api_r = requests.request(
+                    do_api_verb,
+                    url=do_api_url,
+                    headers=do_api_headers,
+                    verify=self.cogitation_certvalidation,
+                    auth=(self.cogitation_username, self.cogitation_password),
+                    payload=do_api_payload,
+                )
+                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
+                response_code = do_api_r.status_code
+                do_api_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
+                return do_api_r.text  # if HTTP status is good, save response
+            else:
+                print(
+                    json.dumps(
+                        {
+                            "do_api_get_headers": do_api_headers,
+                            "do_api_get_url": do_api_url,
+                        },
+                        indent=4,
+                    )
+                )
+        except requests.Timeout:
+            print("E1000: API Connection timeout!")
+        except requests.ConnectionError as connection_error:
+            print(connection_error)
+        except requests.HTTPError:
+            if self.get_http_error_code(response_code):
+                print(
+                    "EA"
+                    + str(response_code)
+                    + ": HTTP Status Error "
+                    + str(response_code)
+                    + " "
+                    + self.get_http_error_code(response_code)
+                )
+                return do_api_r.text
             else:
                 print("EA999: Unhandled HTTP Error " + str(response_code) + "!")
                 exit()  # interpet the error, then close out so we don't have to put all the rest of our code in an except statement
@@ -284,50 +346,52 @@ class Reliquary:
 
         # Simplest first. Let's try the edition that doesn't need templating first
         if not namshub_variables:
-            if namshub_payload:
-                if namshub_verb == "POST":
-                    print(self.do_api_post(namshub_resource, namshub_payload))
-                elif namshub_verb == "PATCH":
-                    print(self.do_api_patch(self.get_play_uri(namshub_resource)))
-            else:
-                if namshub_verb == "DELETE":
-                    print(self.do_api_delete(namshub_resource))
-                elif namshub_verb == "GET":
-                    print(
-                        self.do_api_get(namshub_resource, do_api_dryrun=namshub_dryrun)
+            if namshub_verb == "POST" or namshub_verb == "PATCH":
+                print(
+                    self.do_api_pass(
+                        namshub_resource,
+                        do_api_payload=namshub_payload,
+                        do_api_verb=namshub_verb,
+                        do_api_dryrun=namshub_dryrun,
                     )
+                )
+            if namshub_verb == "DELETE":
+                print(self.do_api_delete(namshub_resource))
+            elif namshub_verb == "GET":
+                print(self.do_api_get(namshub_resource, do_api_dryrun=namshub_dryrun))
+            else:
+                sys.exit("Unsupported API verb " + namshub_verb + "!")
 
         # This edition will leverage J2 templating to translate any URI variables
         elif namshub_variables:
-            if namshub_payload:
-                if namshub_verb == "POST":
-                    print(
-                        self.do_api_post(
-                            self.apply_template(
-                                self.get_play_uri(namshub_resource), namshub_variables
-                            )
-                        )
-                    )
-                elif namshub_verb == "PATCH":
-                    print(
-                        self.do_api_patch(
+            if namshub_verb == "POST" or namshub_verb == "PATCH":
+                print(
+                    self.do_api_pass(
+                        self.apply_template(
                             self.get_play_uri(namshub_resource), namshub_variables
-                        )
+                        ),
+                        do_api_payload=self.apply_template(
+                            namshub_payload, namshub_variables
+                        ),
+                        do_api_verb=namshub_verb,
+                        do_api_dryrun=namshub_dryrun,
                     )
+                )
+            if namshub_verb == "DELETE":
+                print(
+                    self.do_api_delete(
+                        self.apply_template(namshub_resource, namshub_variables)
+                    )
+                )
+            elif namshub_verb == "GET":
+                print(
+                    self.do_api_get(
+                        self.apply_template(namshub_resource, namshub_variables),
+                        do_api_dryrun=namshub_dryrun,
+                    )
+                )
             else:
-                if namshub_verb == "DELETE":
-                    print(
-                        self.do_api_delete(
-                            self.apply_template(namshub_resource, namshub_variables)
-                        )
-                    )
-                elif namshub_verb == "GET":
-                    print(
-                        self.do_api_get(
-                            self.apply_template(namshub_resource, namshub_variables),
-                            do_api_dryrun=namshub_dryrun,
-                        )
-                    )
+                sys.exit("Unsupported API verb " + namshub_verb + "!")
 
     # One-shot to apply templates to a given object string
     def apply_template(self, apply_template_template, apply_template_variables):
