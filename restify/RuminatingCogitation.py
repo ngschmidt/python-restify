@@ -325,6 +325,9 @@ class Reliquary:
         namshub_resource = self.get_play_uri(namshub_string)
         # Grab the namshub payload from the json file, if it exists
         namshub_payload = self.get_play_payload(namshub_string)
+        # Grab the variables, if it exists
+        if(namshub_variables):
+            namshub_variables = self.get_json_file_or_string(namshub_variables)
 
         # Test to see if either variables or payloads are required
         # If they're required and not present, don't proceed
@@ -380,6 +383,7 @@ class Reliquary:
                     )
                 )
             elif namshub_verb == "GET":
+                print(namshub_variables)
                 print(
                     self.do_api_get(
                         self.apply_template(namshub_resource, namshub_variables),
