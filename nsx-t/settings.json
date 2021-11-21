@@ -26,7 +26,7 @@
 		},
 		"get_cluster_certificate": {
 			"uri": "/policy/api/v1/infra/certificates/{{ id }}",
-			"description": "Read Certificate (requires ID variable",
+			"description": "Read Certificate (requires ID variable)",
 			"method": "GET",
 			"requiresvariables": false,
 			"variables": { 
@@ -40,6 +40,41 @@
 			"requiresbody": false,
 			"requiresvariables": false,
 			"variables": {}
+		},
+		"get_tier0s": {
+			"uri": "/policy/api/v1/infra/tier-0s",
+			"description": "Get Tier-0 Logical Routers",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}	
+		},
+		"get_tier0": {
+			"uri": "/policy/api/v1/infra/tier-0s/{{ id }}",
+			"description": "Get Tier-0 Logical Router (requires ID variable)",
+			"method": "GET",
+			"requiresvariables": false,
+			"variables": { 
+				"id": false
+			}
+		},
+		"get_tier0_routes": {
+			"uri": "/policy/api/v1/infra/tier-0s/{{ id }}/forwarding-table",
+			"description": "Get Tier-0 Logical Router Table (requires ID variable)",
+			"method": "GET",
+			"requiresvariables": false,
+			"variables": { 
+				"id": false
+			}
+		},
+		"get_realization_alarms": {
+			"uri": "/policy/api/v1/infra/realized-state/alarms",
+			"description": "Get System-wide alarms",
+			"method": "GET",
+			"requiresvariables": false,
+			"variables": { 
+				"id": false
+			}
 		},
 		"put_certificate": {
 			"uri": "/policy/api/v1/infra/certificates/{{ id }}",
