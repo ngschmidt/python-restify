@@ -17,7 +17,7 @@ python3 -m pip install restify-ENGYAK
 Invoke via the CLI:
 
 ```bash
-python3 -m restify -f settings.json get_api-object
+python3 -m restify -f settings.json list_plays
 ```
 
 To build a new settings file:
@@ -32,14 +32,23 @@ To list plays provided by a settings file:
 python3 -m restify -f settings.json list_plays
 ```
 
+## API Invocation
+
+Once the package is installed, the `namshub()` API can be used by:
+
+```python
+# Import Restify Library
+from restify.RuminatingCogitation import Settings
+from restify.RuminatingCogitation import Reliquary
+# Set the interface - apply from variables no matter what
+cogitation_interface = Reliquary(args.f, input_user=api_user, input_pass=api_pass)
+# Exposed variables: def namshub(self, namshub_string, namshub_variables=False, namshub_dryrun=False):
+cogitation_interface.namshub({{ }}, namshub_variables={{ }})
+```
+
+And then process data from there.
+
 ## Notes
-
-## TODO
-
-* More Content
-* Automated testing
-* Token authentication
-* More actions than `GET`/`DELETE`
 
 ## Authors
 
