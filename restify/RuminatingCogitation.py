@@ -343,7 +343,8 @@ class Reliquary:
             namshub_resource = self.apply_template(namshub_resource, namshub_variables)
             if namshub_payload:
                 for i in namshub_variables:
-                    namshub_payload[i] = namshub_variables[i] if i in namshub_payload else None
+                    if i in namshub_payload:
+                        namshub_payload[i] = namshub_variables[i]
 
         # Now that the transforms, testing, pre-processing are done, let's send to an API!
         if namshub_verb == "GET":

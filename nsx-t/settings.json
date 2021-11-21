@@ -34,7 +34,7 @@
 			}
 		},
 		"get_cluster_certificates": {
-			"uri": "/policy/api/v1/infra/certificates",
+			"uri": "/api/v1/trust-management/certificates",
 			"description": "List Certificates",
 			"method": "GET",
 			"requiresbody": false,
@@ -89,13 +89,12 @@
 			}
 		},
 		"put_certificate": {
-			"uri": "/policy/api/v1/infra/certificates/{{ id }}",
-			"description": "Upload Certificate. Requires ID and Payload",
-			"method": "PUT",
+			"uri": "/api/v1/trust-management/certificates?action=import",
+			"description": "Upload Certificate. Requires Payload",
+			"method": "POST",
 			"requiresbody": true,
 			"requiresvariables": true,
 			"variables": {
-				"id": false,
 				"certkeychain": false,
 				"privatekey": false,
 				"passphrase": false
