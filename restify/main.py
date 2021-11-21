@@ -71,6 +71,6 @@ elif args.getplay or args.dryrun:
 else:
     # Provide an "overloading interface"
     if not args.vars:
-        cogitation_interface.namshub(args.play)
+        print(cogitation_interface.namshub(args.play))
     else:
-        cogitation_interface.namshub(args.play, namshub_variables=args.vars)
+        print(cogitation_interface.namshub(args.play, namshub_variables=args.vars))

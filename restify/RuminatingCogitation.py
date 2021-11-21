@@ -351,18 +351,16 @@ class Reliquary:
 
         # Now that the transforms, testing, pre-processing are done, let's send to an API!
         if namshub_verb == "GET":
-            print(self.do_api_get(namshub_resource, do_api_dryrun=namshub_dryrun))
+            return self.do_api_get(namshub_resource, do_api_dryrun=namshub_dryrun)
         elif namshub_verb == "POST" or namshub_verb == "PATCH" or namshub_verb == "PUT":
-            print(
-                self.do_api_pass(
-                    namshub_resource,
-                    do_api_payload=namshub_payload,
-                    do_api_verb=namshub_verb,
-                    do_api_dryrun=namshub_dryrun,
-                )
+            return self.do_api_pass(
+                namshub_resource,
+                do_api_payload=namshub_payload,
+                do_api_verb=namshub_verb,
+                do_api_dryrun=namshub_dryrun,
             )
         elif namshub_verb == "DELETE":
-            print(self.do_api_delete(namshub_resource))
+            return self.do_api_delete(namshub_resource)
         else:
             sys.exit("Unsupported API verb " + namshub_verb + "!")
 
