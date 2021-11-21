@@ -345,7 +345,7 @@ class Reliquary:
 
         # Simplest first. Let's try the edition that doesn't need templating
         if not namshub_variables:
-            if namshub_verb == "POST" or namshub_verb == "PATCH":
+            if namshub_verb == "POST" or namshub_verb == "PATCH" or namshub_verb == "PUT":
                 print(
                     self.do_api_pass(
                         namshub_resource,
@@ -363,7 +363,7 @@ class Reliquary:
 
         # This edition will leverage J2 templating to translate any URI variables
         elif namshub_variables:
-            if namshub_verb == "POST" or namshub_verb == "PATCH":
+            if namshub_verb == "POST" or namshub_verb == "PATCH" or namshub_verb == "PUT":
                 print(
                     self.do_api_pass(
                         self.apply_template(
