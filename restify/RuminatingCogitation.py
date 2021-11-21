@@ -335,9 +335,6 @@ class Reliquary:
             sys.exit(
                 "Error: Payload required by play, but not provided! Specify as a JSON dictionary with `-b`"
             )
-        # If a payload is required and present, load it from the file before proceeding
-        if namshub_payload:
-            namshub_payload = json.dumps(self.get_json_file_or_string(namshub_payload))
 
         # Grab the variables, if it exists
         # From there, apply templates to whatever we can.
@@ -345,9 +342,8 @@ class Reliquary:
             namshub_variables = self.get_json_file_or_string(namshub_variables)
             namshub_resource = self.apply_template(namshub_resource, namshub_variables)
             if namshub_payload:
-                namshub_payload = json.loads(
-                    self.apply_template(namshub_payload, namshub_variables)
-                )
+                for i in namshub_variables:
+                    namshub_payload[i] = namshub_variables[i] if i in namshub_payload else None
 
         # Now that the transforms, testing, pre-processing are done, let's send to an API!
         if namshub_verb == "GET":
@@ -419,9 +415,7 @@ class Reliquary:
     # This object has no value as a `dict`, because its sent to a REST endpoint directly
     def get_play_payload(self, get_play_name):
         try:
-            return json.dumps(
-                self.cogitation_bibliotheca[get_play_name]["payload"], indent=4
-            )
+            return self.cogitation_bibliotheca[get_play_name]["payload"]
         except KeyError:
             return False
         except Exception as e:
@@ -471,7 +465,7 @@ class Reliquary:
             try:
                 return self.get_json_file(input)
             except Exception as e:
-                if self.cogitation.verbosity:
+                if self.cogitation_verbosity:
                     print(str(e))
                 sys.exit(
                     "Error: " + input + " is neither a valid JSON string or filename!"
