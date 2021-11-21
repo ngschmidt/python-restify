@@ -67,6 +67,18 @@
 				"id": false
 			}
 		},
+		"get_event_defs": {
+			"uri": "/api/v1/events",
+			"description": "Fetch system alarm definitions",
+			"method": "GET",
+			"requiresvariables": false
+		},
+		"get_alarms": {
+			"uri": "/api/v1/alarms",
+			"description": "Fetch system alarm",
+			"method": "GET",
+			"requiresvariables": false
+		},
 		"get_realization_alarms": {
 			"uri": "/policy/api/v1/infra/realized-state/alarms",
 			"description": "Get System-wide alarms",
