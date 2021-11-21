@@ -274,7 +274,7 @@ class Reliquary:
                     headers=self.cogitation_headers,
                     verify=self.cogitation_certvalidation,
                     auth=(self.cogitation_username, self.cogitation_password),
-                    payload=do_api_payload,
+                    json=do_api_payload,
                 )
                 # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
                 response_code = do_api_r.status_code
@@ -325,10 +325,6 @@ class Reliquary:
         namshub_resource = self.get_play_uri(namshub_string)
         # Grab the namshub payload from the json file, if it exists
         namshub_payload = self.get_play_payload(namshub_string)
-        # Grab the variables, if it exists
-        if(namshub_variables):
-            namshub_variables = self.get_json_file_or_string(namshub_variables)
-
         # Test to see if either variables or payloads are required
         # If they're required and not present, don't proceed
         if self.get_play_requiresvariables(namshub_string) and not namshub_variables:
@@ -340,63 +336,52 @@ class Reliquary:
                 "Error: Payload required by play, but not provided! Specify as a JSON dictionary with `-b`"
             )
         # If a payload is required and present, load it from the file before proceeding
-        elif namshub_payload:
-            namshub_payload = self.get_json_file_or_string(namshub_payload)
+        if namshub_payload:
+            namshub_payload = json.dumps(self.get_json_file_or_string(namshub_payload))
 
-        # Simplest first. Let's try the edition that doesn't need templating
-        if not namshub_variables:
-            if namshub_verb == "POST" or namshub_verb == "PATCH" or namshub_verb == "PUT":
-                print(
-                    self.do_api_pass(
-                        namshub_resource,
-                        do_api_payload=namshub_payload,
-                        do_api_verb=namshub_verb,
-                        do_api_dryrun=namshub_dryrun,
-                    )
+        # Grab the variables, if it exists
+        # From there, apply templates to whatever we can.
+        if namshub_variables:
+            namshub_variables = self.get_json_file_or_string(namshub_variables)
+            namshub_resource = self.apply_template(namshub_resource, namshub_variables)
+            if namshub_payload:
+                namshub_payload = json.loads(
+                    self.apply_template(namshub_payload, namshub_variables)
                 )
-            if namshub_verb == "DELETE":
-                print(self.do_api_delete(namshub_resource))
-            elif namshub_verb == "GET":
-                print(self.do_api_get(namshub_resource, do_api_dryrun=namshub_dryrun))
-            else:
-                sys.exit("Unsupported API verb " + namshub_verb + "!")
 
-        # This edition will leverage J2 templating to translate any URI variables
-        elif namshub_variables:
-            if namshub_verb == "POST" or namshub_verb == "PATCH" or namshub_verb == "PUT":
-                print(
-                    self.do_api_pass(
-                        self.apply_template(
-                            self.get_play_uri(namshub_resource), namshub_variables
-                        ),
-                        do_api_payload=self.apply_template(
-                            namshub_payload, namshub_variables
-                        ),
-                        do_api_verb=namshub_verb,
-                        do_api_dryrun=namshub_dryrun,
-                    )
+        # Now that the transforms, testing, pre-processing are done, let's send to an API!
+        if namshub_verb == "GET":
+            print(self.do_api_get(namshub_resource, do_api_dryrun=namshub_dryrun))
+        elif namshub_verb == "POST" or namshub_verb == "PATCH" or namshub_verb == "PUT":
+            print(
+                self.do_api_pass(
+                    namshub_resource,
+                    do_api_payload=namshub_payload,
+                    do_api_verb=namshub_verb,
+                    do_api_dryrun=namshub_dryrun,
                 )
-            if namshub_verb == "DELETE":
-                print(
-                    self.do_api_delete(
-                        self.apply_template(namshub_resource, namshub_variables)
-                    )
-                )
-            elif namshub_verb == "GET":
-                print(namshub_variables)
-                print(
-                    self.do_api_get(
-                        self.apply_template(namshub_resource, namshub_variables),
-                        do_api_dryrun=namshub_dryrun,
-                    )
-                )
-            else:
-                sys.exit("Unsupported API verb " + namshub_verb + "!")
+            )
+        elif namshub_verb == "DELETE":
+            print(self.do_api_delete(namshub_resource))
+        else:
+            sys.exit("Unsupported API verb " + namshub_verb + "!")
 
     # One-shot to apply templates to a given object string
     def apply_template(self, apply_template_template, apply_template_variables):
-        j2template = Environment(loader=BaseLoader).from_string(apply_template_template)
-        return j2template.render(apply_template_variables)
+        try:
+            j2template = Environment(loader=BaseLoader).from_string(
+                apply_template_template
+            )
+            return j2template.render(apply_template_variables)
+        except Exception as e:
+            sys.exit(
+                "Exception applying "
+                + json.dumps(apply_template_variables)
+                + " to "
+                + apply_template_template
+                + ". Error: "
+                + str(e)
+            )
 
     def validate_url(self, validate_url_url):
         # 99% solution here is to validate that a URL provided is valid. This doesn't test it or anything
@@ -424,7 +409,12 @@ class Reliquary:
         try:
             return self.cogitation_bibliotheca[get_play_name]["uri"]
         except Exception as e:
-            exit("Exception fetching play URI: " + str(get_play_name) + str(e))
+            exit(
+                "Exception fetching play URI: "
+                + str(get_play_name)
+                + ". Error: "
+                + str(e)
+            )
 
     # Return JSON string from `dict` payload for a given api call if successful
     # If not, return false and don't crash if a KeyError is returned

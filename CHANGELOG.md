@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `PUT` method
 - More NSX-T Plays
+- Error handling on templates, URI fetching
+- Generic `requests` method wrapper, we'll use it for payload verbs for now
+
+### Changed
+
+- `namshub` restructured to make a bit more sense, be faster, less wordy
 
 ## [20-Nov-2021] v0.1.8
 
