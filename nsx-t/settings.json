@@ -25,7 +25,7 @@
 			"variables": {}
 		},
 		"get_cluster_certificate": {
-			"uri": "/policy/api/v1/infra/certificates/{{ id }}",
+			"uri": "/api/v1/trust-management/certificates/{{ id }}",
 			"description": "Read Certificate (requires ID variable)",
 			"method": "GET",
 			"requiresvariables": false,
@@ -81,12 +81,15 @@
 		},
 		"get_realization_alarms": {
 			"uri": "/policy/api/v1/infra/realized-state/alarms",
-			"description": "Get System-wide alarms",
+			"description": "Get System-wide Realization alarms",
 			"method": "GET",
-			"requiresvariables": false,
-			"variables": { 
-				"id": false
-			}
+			"requiresvariables": false
+		},
+		"get_securityconfig": {
+			"uri": "/api/v1/global-configs/SecurityGlobalConfig",
+			"description": "Get System-wide security settings",
+			"method": "GET",
+			"requiresvariables": false
 		},
 		"put_certificate": {
 			"uri": "/api/v1/trust-management/certificates?action=import",
@@ -104,6 +107,33 @@
 				"pem_encoded": "{{ certkeychain }}\n",
 				"private_key": "{{ privatekey }}\n",
 				"passphrase": "{{ passphrase }}"
+			}
+		},
+		"post_cluster_certificate": { 
+			"uri": "/api/v1/cluster/api-certificate?action=set_cluster_certificate&certificate_id={{ id }}",
+			"description": "Set Cluster Certificate",
+			"method": "POST",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": false
+			}
+		},
+		"put_securityconfig": {
+			"uri": "/api/v1/global-configs/SecurityGlobalConfig",
+			"description": "Set Global Security Config",
+			"method": "PUT",
+			"requiresbody": true,
+			"requiresvariables": true,
+			"variables": {
+				"crl_checking_enabled": false,
+				"resource_type": "SecurityGlobalConfig",
+				"_revision": ""
+			},
+			"payload": {
+				"crl_checking_enabled": false,
+				"resource_type": "SecurityGlobalConfig",
+				"_revision": ""
 			}
 		}
 	},
