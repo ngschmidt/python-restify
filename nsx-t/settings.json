@@ -119,6 +119,16 @@
 				"id": false
 			}
 		},
+		"post_webui_certificate": { 
+			"uri": "/api/v1/node/services/http?action=apply_certificate&certificate_id={{ id }}",
+			"description": "Set WebUI Certificate",
+			"method": "POST",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": { 
+				"id": false
+			}
+		},
 		"put_securityconfig": {
 			"uri": "/api/v1/global-configs/SecurityGlobalConfig",
 			"description": "Set Global Security Config",
