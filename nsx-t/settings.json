@@ -41,6 +41,14 @@
 			"requiresvariables": false,
 			"variables": {}
 		},
+		"get_tns": {
+			"uri": "/api/v1/transport-nodes",
+			"description": "Get Transport Nodes",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}	
+		},
 		"get_tier0s": {
 			"uri": "/policy/api/v1/infra/tier-0s",
 			"description": "Get Tier-0 Logical Routers",
