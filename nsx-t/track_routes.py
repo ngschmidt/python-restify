@@ -31,17 +31,21 @@ router_list = json.loads(cogitation_interface.namshub("get_tier0s"))["results"]
 # For each router ID, populate the list
 for i in router_list:
     # Each logical router has a UUID, and is structured to provide a `dict` per `edge_node`
-    stack[i['unique_id']] = {}
+    stack[i["unique_id"]] = {}
     # Embed the friendly name as part of the JSON dictionary
-    stack[i['unique_id']]['name'] = i['id']
-    stack[i['unique_id']]['contents'] = {}
+    stack[i["unique_id"]]["name"] = i["id"]
+    stack[i["unique_id"]]["contents"] = {}
     # Execute another API call per logical router, this will be mapped into the stack
-    stack[i['unique_id']]['contents'] = json.loads(cogitation_interface.namshub("get_tier0_routes", namshub_variables=json.dumps({"id": i['id']})))['results']
+    stack[i["unique_id"]]["contents"] = json.loads(
+        cogitation_interface.namshub(
+            "get_tier0_routes", namshub_variables=json.dumps({"id": i["id"]})
+        )
+    )["results"]
     # Recursive sort everything
 
 # Compare to latest json file
 try:
-    previous_dict = cogitation_interface.get_json_file('trackroute_latest.json')
+    previous_dict = cogitation_interface.get_json_file("trackroute_latest.json")
 except:
     previous_dict = {}
 

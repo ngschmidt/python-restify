@@ -53,7 +53,7 @@
 			"uri": "/policy/api/v1/infra/tier-0s/{{ id }}",
 			"description": "Get Tier-0 Logical Router (requires ID variable)",
 			"method": "GET",
-			"requiresvariables": false,
+			"requiresvariables": true,
 			"variables": { 
 				"id": false
 			}
@@ -62,8 +62,17 @@
 			"uri": "/policy/api/v1/infra/tier-0s/{{ id }}/forwarding-table",
 			"description": "Get Tier-0 Logical Router Table (requires ID variable)",
 			"method": "GET",
-			"requiresvariables": false,
+			"requiresvariables": true,
 			"variables": { 
+				"id": false
+			}
+		},
+		"get_tier0_bgp_neighbors": {
+			"uri": "/policy/api/v1/infra/tier-0s/{{ id }}/locale-services/default/bgp/neighbors/status",
+			"description": "Get Tier-0 Logical Router BGP Neighbors (requires ID variable)",
+			"method": "GET",
+			"requiresvariables": true,
+			"variables": {
 				"id": false
 			}
 		},
