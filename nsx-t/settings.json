@@ -41,6 +41,58 @@
 			"requiresvariables": false,
 			"variables": {}
 		},
+		"get_cluster_nodes": {
+			"uri": "/api/v1/cluster/nodes/",
+			"description": "Get Cluster Nodes",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": "false",
+			"variables": {}
+		},
+		"get_cluster_node": {
+			"uri": "/api/v1/cluster/nodes/{{ id }}",
+			"description": "Get Cluster Node",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": "true",
+			"variables": {
+				"id": false
+			}
+		},
+		"get_service": {
+			"uri": "/api/v1/node/services",
+			"description": "Get Service",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}
+		},
+		"get_service_search_status": {
+			"uri": "/api/v1/node/services/search/status",
+			"description": "Get Service Search Status",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}
+		},
+		"get_cluster_node_corfusync": {
+			"uri": "/api/v1/cluster/nodes/{{ id }}/repo_sync/status",
+			"description": "Get Cluster Node Corfu Status",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": "true",
+			"variables": {
+				"id": false
+			}
+		},
+		"post_cluster_node_corfusync": {
+			"uri": "/api/v1/cluster/node?action=repo_sync",
+			"description": "Force Corfu to resync",
+			"method": "POST",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}
+		},
 		"get_tns": {
 			"uri": "/api/v1/transport-nodes",
 			"description": "Get Transport Nodes",
