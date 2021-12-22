@@ -214,6 +214,26 @@
 				"resource_type": "SecurityGlobalConfig",
 				"_revision": ""
 			}
+		},
+		"get_nsxalb_controller": {
+			"uri": "/policy/api/v1/alb/controller-nodes/deployments",
+			"description": "Delete inaccessible/stale NSX ALB Entries",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {
+				"id": ""
+			}
+		},
+		"delete_nsxalb_controller": {
+			"uri": "/policy/api/v1/alb/controller-nodes/deployments/{{ id }}?action=delete&force_delete=true&inaccessible",
+			"description": "Delete inaccessible/stale NSX ALB Entries",
+			"method": "POST",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": ""
+			}
 		}
 	},
 	"errors": {
