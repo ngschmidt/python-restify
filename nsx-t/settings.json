@@ -41,6 +41,66 @@
 			"requiresvariables": false,
 			"variables": {}
 		},
+		"get_cluster_nodes": {
+			"uri": "/api/v1/cluster/nodes/",
+			"description": "Get Cluster Nodes",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": "false",
+			"variables": {}
+		},
+		"get_cluster_node": {
+			"uri": "/api/v1/cluster/nodes/{{ id }}",
+			"description": "Get Cluster Node",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": "true",
+			"variables": {
+				"id": false
+			}
+		},
+		"get_service": {
+			"uri": "/api/v1/node/services",
+			"description": "Get Service",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}
+		},
+		"get_service_search_status": {
+			"uri": "/api/v1/node/services/search/status",
+			"description": "Get Service Search Status",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}
+		},
+		"get_cluster_node_corfusync": {
+			"uri": "/api/v1/cluster/nodes/{{ id }}/repo_sync/status",
+			"description": "Get Cluster Node Corfu Status",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": "true",
+			"variables": {
+				"id": false
+			}
+		},
+		"post_cluster_node_corfusync": {
+			"uri": "/api/v1/cluster/node?action=repo_sync",
+			"description": "Force Corfu to resync",
+			"method": "POST",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}
+		},
+		"get_tns": {
+			"uri": "/api/v1/transport-nodes",
+			"description": "Get Transport Nodes",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}	
+		},
 		"get_tier0s": {
 			"uri": "/policy/api/v1/infra/tier-0s",
 			"description": "Get Tier-0 Logical Routers",
@@ -53,7 +113,7 @@
 			"uri": "/policy/api/v1/infra/tier-0s/{{ id }}",
 			"description": "Get Tier-0 Logical Router (requires ID variable)",
 			"method": "GET",
-			"requiresvariables": false,
+			"requiresvariables": true,
 			"variables": { 
 				"id": false
 			}
@@ -62,8 +122,17 @@
 			"uri": "/policy/api/v1/infra/tier-0s/{{ id }}/forwarding-table",
 			"description": "Get Tier-0 Logical Router Table (requires ID variable)",
 			"method": "GET",
-			"requiresvariables": false,
+			"requiresvariables": true,
 			"variables": { 
+				"id": false
+			}
+		},
+		"get_tier0_bgp_neighbors": {
+			"uri": "/policy/api/v1/infra/tier-0s/{{ id }}/locale-services/default/bgp/neighbors/status",
+			"description": "Get Tier-0 Logical Router BGP Neighbors (requires ID variable)",
+			"method": "GET",
+			"requiresvariables": true,
+			"variables": {
 				"id": false
 			}
 		},
@@ -144,6 +213,26 @@
 				"crl_checking_enabled": false,
 				"resource_type": "SecurityGlobalConfig",
 				"_revision": ""
+			}
+		},
+		"get_nsxalb_controller": {
+			"uri": "/policy/api/v1/alb/controller-nodes/deployments",
+			"description": "Delete inaccessible/stale NSX ALB Entries",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {
+				"id": ""
+			}
+		},
+		"delete_nsxalb_controller": {
+			"uri": "/policy/api/v1/alb/controller-nodes/deployments/{{ id }}?action=delete&force_delete=true&inaccessible",
+			"description": "Delete inaccessible/stale NSX ALB Entries",
+			"method": "POST",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": ""
 			}
 		}
 	},
