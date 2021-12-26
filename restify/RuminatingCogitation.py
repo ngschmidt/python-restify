@@ -117,7 +117,7 @@ class Reliquary:
     cogitation_errors = {}
 
     # We're pretty much picking up our configuration data
-    def __init__(self, input_settings, input_user=None, input_pass=None):
+    def __init__(self, input_settings, input_user=None, input_pass=None, input_endpoint=None):
 
         # Load Settings from JSON
         try:
@@ -130,7 +130,11 @@ class Reliquary:
         try:
             # Let's start with basic global settings
             self.cogitation_verbosity = json_settings["settings"]["verbosity"]
-            self.cogitation_endpoint = json_settings["settings"]["endpoint"]
+            # Provide the option to specify the endpoint with the constructor, or pull it from the file
+            if input_endpoint and input_endpoint is str:
+                self.cogitation_endpoint = input_endpoint
+            else:
+                self.cogitation_endpoint = json_settings["settings"]["endpoint"]
             # TLS Tuning
             self.cogitation_certvalidation = json_settings["settings"]["tls"][
                 "validation"
@@ -324,6 +328,7 @@ class Reliquary:
         # URI is in JSON file
         namshub_resource = self.get_play_uri(namshub_string)
         # Grab the namshub payload from the json file, if it exists
+        # If it already exists, you don't need to load it
         if not namshub_payload:
             namshub_payload = self.get_play_payload(namshub_string)
         # Test to see if either variables or payloads are required
@@ -342,10 +347,18 @@ class Reliquary:
         if namshub_variables:
             namshub_variables = self.get_json_file_or_string(namshub_variables)
             namshub_resource = self.apply_template(namshub_resource, namshub_variables)
-            if namshub_payload:
+            # Check to see if the payload is a string before templating the payload
+            if namshub_payload and namshub_payload is str:
                 for i in namshub_variables:
                     if i in namshub_payload:
                         namshub_payload[i] = namshub_variables[i]
+
+        # Make sure that the payload is a string before shippinng it to the API
+        if namshub_payload and namshub_payload is not str:
+            try:
+                namshub_payload = json.dumps(namshub_payload)
+            except Exception as e:
+                sys.exit("Error processing API payload as " + str(type(namshub_payload)) + " " + str(e))
 
         # Now that the transforms, testing, pre-processing are done, let's send to an API!
         if namshub_verb == "GET":
@@ -459,12 +472,17 @@ class Reliquary:
             exit()
 
     def get_json_file_or_string(self, input):
+        # Recursive method to return a dictionary even if we're passed a dictionary
+        if type(input) is dict:
+            return input
+        # Try to load as a string
         try:
             return json.loads(input)
         except Exception as e:
             if self.cogitation_verbosity:
                 print(str(e))
             try:
+                # If it fails as a string, try to load as a file
                 return self.get_json_file(input)
             except Exception as e:
                 if self.cogitation_verbosity:

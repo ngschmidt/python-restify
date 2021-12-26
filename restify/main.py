@@ -14,12 +14,20 @@ from RuminatingCogitation import Settings
 from RuminatingCogitation import Reliquary
 
 # Import OS - let's use this for passwords and usernames
-# APIUSER = Username
-# APIPASS = Password
 import os
+import sys
 
+# Try to load from the OS Environment
 api_user = os.getenv("APIUSER")
 api_pass = os.getenv("APIPASS")
+api_endpoint = os.getenv("APIENDPOINT")
+
+# Let the user know if the envs aren't set up properly
+for env_mandatory in ["APIUSER", "APIPASS"]:
+    if env_mandatory not in os.environ:
+        sys.exit(
+            "Missing environment variable " + env_mandatory + " not found! Exiting..."
+        )
 
 play_help = (
     "Play to execute, Example: delete_do-things_<uuid>. \r\n"
@@ -50,8 +58,11 @@ if args.play == "create_settings":
     print(template.get_settings_json())
     exit()
 
-# Set the interface - apply from variables no matter what
-cogitation_interface = Reliquary(args.f, input_user=api_user, input_pass=api_pass)
+# Set the interface - apply from variables
+if api_endpoint and api_endpoint is str:
+    cogitation_interface = Reliquary(args.f, input_user=api_user, input_pass=api_pass, input_endpoint=api_endpoint)
+else:
+    cogitation_interface = Reliquary(args.f, input_user=api_user, input_pass=api_pass)
 
 # Once the library is fired up and settings are loaded, offer the option to list any plays in the settings file
 if args.play == "list_plays":
