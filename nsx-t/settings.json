@@ -198,6 +198,26 @@
 				"id": false
 			}
 		},
+		"get_globalconfig": {
+			"uri": "/policy/api/v1/infra/global-config",
+			"description": "Get Global Config. attribute `l3_forwarding_mode` is used to turn on IPv6",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false
+		},
+		"set_globalconfig_ipv6_on": {
+			"uri": "/policy/api/v1/infra/global-config",
+			"description": "Set Global Config. attribute `l3_forwarding_mode` is used to turn on IPv6",
+			"method": "PATCH",
+			"requiresbody": true,
+			"requiresvariables": false,
+			"payload": {
+				"display_name": "global-config",
+				"path": "/infra/global-config",
+				"relative_path": "global-config",
+				"l3_forwarding_mode": "IPV4_AND_IPV6"
+			}
+		},
 		"put_securityconfig": {
 			"uri": "/api/v1/global-configs/SecurityGlobalConfig",
 			"description": "Set Global Security Config",
@@ -234,6 +254,35 @@
 			"variables": {
 				"id": ""
 			}
+		},
+		"get_nsxalb_tls_profiles": {
+			"uri": "/policy/api/v1/infra/alb-ssl-profiles",
+			"description": "Fetch NSX ALB Managed TLS Profiles",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}
+		},
+		"get_nsxalb_tls_profile": {
+			"uri": "/policy/api/v1/infra/alb-ssl-profiles/{{ id }}",
+			"description": "Fetch NSX ALB Managed TLS Profiles",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": false
+			}
+		},
+		"set_nsxalb_tls_profile": {
+			"uri": "/policy/api/v1/infra/alb-ssl-profiles/{{ id }}",
+			"description": "Fetch NSX ALB Managed TLS Profiles",
+			"method": "PUT",
+			"requiresbody": true,
+			"requiresvariables": false,
+			"variables": {
+				"id": false
+			},
+			"payload": {}
 		}
 	},
 	"errors": {

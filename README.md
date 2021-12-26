@@ -14,6 +14,14 @@ Download the package:
 python3 -m pip install restify-ENGYAK
 ```
 
+Set Environment Variables. `APIUSER` and `APIPASS` are mandatory.
+
+```bash
+export APIUSER=username
+export APIPASS=password
+export APIENDPOINT={{ API Full URL }}
+```
+
 Invoke via the CLI:
 
 ```bash
@@ -46,7 +54,8 @@ cogitation_interface = Reliquary(args.f, input_user=api_user, input_pass=api_pas
 cogitation_interface.namshub({{ }}, namshub_variables={{ }})
 ```
 
-And then process data from there.
+And then process data from there. 
+`namshub` currently exports text from the API, and may support a `dict` in the future.
 
 ## Notes
 
