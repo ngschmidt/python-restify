@@ -254,6 +254,14 @@
 			"variables": {
 				"id": ""
 			}
+		},
+		"get_nsxalb_tls_profiles": {
+			"uri": " /policy/api/v1/infra/alb-ssl-profiles",
+			"description": "Fetch NSX ALB Managed TLS Profiles",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}
 		}
 	},
 	"errors": {
