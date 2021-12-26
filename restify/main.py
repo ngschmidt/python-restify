@@ -85,5 +85,7 @@ else:
     # Provide an "overloading interface"
     if not args.vars:
         print(cogitation_interface.namshub(args.play))
+    elif args.p:
+        print(cogitation_interface.namshub(args.play, namshub_variables=args.vars, namshub_payload=args.p))
     else:
         print(cogitation_interface.namshub(args.play, namshub_variables=args.vars))
