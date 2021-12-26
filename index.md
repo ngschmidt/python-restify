@@ -1,26 +1,34 @@
 # Python REST Tool
 
-## Software Objectives
+## Objectives
 
-* Provide a direct, straightforward method to interact with RESTful interfaces
-* Save typing time by DRY (`Don't Repeat Yourself`)
-* Retain settings between "plays"
-* Enable rapid iteration, recording "plays" for later
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+* Provide a direct, straightforward method to interact with RESTful interfaces (`namshub`)
+* Save typing time by DRY (*Don't Repeat Yourself*), enable templating(`Jinja2`) to prevent unnecessary repetition
+* Retain settings between known good procedures, _without hard-coding actions_
+* Enable rapid iteration, recording actions and procedures for later
+* Enable users to save a simple library of actions for later. The objective here is *repeatability*.
+* Provide acceptable quality error-handling and intuitive error exposure to the user
+
+## Saved Libraries
+
+* [NSX-T](https://github.com/ngschmidt/python-restify/blob/main/nsx-t/settings.json)
+
+## API Documentation
+
+* [Library](doc/)
+* [NSX-T](doc/nsxt/)
 
 ## How to use this tool
+
+### Building a Settings file, Environment Setup
 
 Download the package:
 
 ```bash
 python3 -m pip install restify-ENGYAK
 ```
-
-Invoke via the CLI:
-
-```bash
-python3 -m restify -f settings.json get_api-object
-```
-
 To build a new settings file:
 
 ```bash
@@ -33,24 +41,68 @@ To list plays provided by a settings file:
 python3 -m restify -f settings.json list_plays
 ```
 
+Set Environment Variables. `APIUSER` and `APIPASS` are mandatory.
+
+```bash
+export APIUSER=username
+export APIPASS=password
+export APIENDPOINT={{ API Full URL }}
+```
+
+### CLI Invocation
+
+Invoke via the CLI:
+
+```bash
+python3 -m restify -f settings.json list_plays
+```
+
+Leverage the `help` file for more details on supported functions:
+
+```bash
+python3 -m restify --help
+```
+
+Congratulate yourself on your new responsibility as an automation maintainer!
+
+### API Invocation
+
+The package `restify-ENGYAK` provides two python classes:
+
+* `restify.RuminatingCogitation.Settings`: Storage class for the endpoint definition and settings. Not used, it's just here to help generate settings files. Completely viable alternative to Jinja if that better fits consumption models
+  * _This is not a mandatory attribute to `import` for API Invocation!_
+* `restify.RuminatingCogitation.Reliiquary`: Storage class for saved plays. Has a "constructor" to connect to an endpoint, and functions (formatted as `do_api_<verb>`) invoke further actions from there.
+
+Once the package is installed, the `namshub()` API can be used by:
+
+```python
+# Import Restify Library
+from restify.RuminatingCogitation import Settings
+from restify.RuminatingCogitation import Reliquary
+# Set the interface - apply from variables no matter what
+cogitation_interface = Reliquary(args.f, input_user=api_user, input_pass=api_pass)
+# Exposed variables: def namshub(self, namshub_string, namshub_variables=False, namshub_dryrun=False):
+cogitation_interface.namshub({{ }}, namshub_variables={{ }})
+```
+
+And then process data from there.
+`namshub` currently exports text from the API, and may support a `dict` in the future.
+
 ## Customizing this tool
 
 The primary value here is customization. This project will provide a limited subset of shared plays, but these `reliquaries` are the consumer's responsibility.
-
-To create a new custom `reliquary,` generate a new file:
 
 ```bash
 python3 -m restify create_settings > new_file.json
 ```
 
-The vast majority of this generated file is for HTTP error handling - and won't need any work unless there are some idiosyncracies with the endpoint. Customization for a new endpoint should begin here:
+The vast majority of this generated file is for HTTP error handling - and won't need any work unless there are some idiosyncracies with the endpoint. `restify` will test access to all keys before starting, which should provide intuitive error handling if a file isn't formatted properly.
+
+Customization for a new endpoint should begin here:
 
 ```json
     "settings": {
         "authentication": {
-            "username": "admin",
-            "password": "password",
-            "method": "basic",
             "certificate": "",
             "key": ""
         },
@@ -58,46 +110,39 @@ The vast majority of this generated file is for HTTP error handling - and won't 
             "validation": false
         },
         "verbosity": 1,
-        "endpoint": ""
+        "headers": {
+            "content-type": "application/json",
+            "X-Allow-Overwrite": "true"
+        },
     },
     "plays": {},
 ```
 
-## Templating
+### Adding `namshubs`
 
-Generally, this tool's design intent is to use a `settings file` per endpoint. With repeatable endpoints, it would be an opinionated recommendation to leverage Jinja2 templates as follows:
+Plays will have a common format:
 
-Create a new Jinja2 template
-
-```bash
-python3 -m restify create_settings | sed 's/"endpoint": "{{ endpoint }}" > endpoint_template.j2
+```json
+"get_tier0_routes": {
+    "uri": "/policy/api/v1/infra/tier-0s/{{ id }}/forwarding-table",
+    "description": "Get Tier-0 Logical Router Table (requires ID variable)",
+    "method": "GET",
+    "requiresvariables": true,
+    "variables": { 
+        "id": false
+    }
+}
 ```
 
-Generate some Python templating code:
-
-```python
-# Import Jinja2 modules
-from jinja2 import Environment, FileSystemLoader
-
-# Create Environment
-local_env = Environment(loader=FileSystemLoader("."))
-
-# Load Endpoint Template
-endpoint_template = local_env.get_template("endpoint_template.j2")
-print(endpoint_template.render(endpoint="https://abcdef.engyak.net/"))
-```
-
-Congratulate yourself on your new responsibility as an automation maintainer!
-
-## Leveraging this as a Python class
-
-The package `restify-ENGYAK` provides two python classes:
-
-* `RuminatingCogitationSettings`: Storage class for the endpoint definition and settings. Not used, it's just here to help generate settings files. Completely viable alternative to Jinja if that better fits consumption models
-* `RuminatingCogitationReliiquary`: Storage class for saved plays. Has a "constructor" to connect to an endpoint, and functions (formatted as `do_api_<verb>`) invoke further actions from there.
-
-These are freely available to customize.
-
-## Saved Libraries
-
-* [NSX-T](nsxt.json)
+* Name: The key for each _play_ is the name that the `namshub` API or the CLI will invoke
+  * `uri`: The uniform resource indicator to access on a particular endpoint
+  * `description`: This is for us - describe what the API endpoint does
+  * `method`: Specify the HTTP verb. Acceptable parameters are `["GET", "POST", "PATCH", "PUT", "DELETE"]`
+  * `requiresvariables`: Specify that the play will require `Jinja2` templating (*optional*)
+  * `requirespayload`: Specify that the play will require a text body/payload (*optional*)
+  * `variables`: Provide a `json dict` of key-value pairs to apply against the play
+    * This structure will be used to validate what a user enters in, and isn't used directly
+    * Example: `python3 -m restify -f settings.json --vars '{\"id\": \"deadbeef\"}`
+  * `payload`: Provide a `document` to send to the API endpoint.
+    * This is not processed as a dict, but instead as a string
+    * Jinja2 will apply variables to both this and the URI
