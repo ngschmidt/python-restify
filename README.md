@@ -14,6 +14,14 @@ Download the package:
 python3 -m pip install restify-ENGYAK
 ```
 
+Set Environment Variables. `APIUSER` and `APIPASS` are mandatory.
+
+```bash
+export APIUSER=username
+export APIPASS=password
+export APIENDPOINT={{ API Full URL }}
+```
+
 Invoke via the CLI:
 
 ```bash
