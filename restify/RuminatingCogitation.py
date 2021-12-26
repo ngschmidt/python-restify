@@ -117,7 +117,9 @@ class Reliquary:
     cogitation_errors = {}
 
     # We're pretty much picking up our configuration data
-    def __init__(self, input_settings, input_user=None, input_pass=None, input_endpoint=None):
+    def __init__(
+        self, input_settings, input_user=None, input_pass=None, input_endpoint=None
+    ):
 
         # Load Settings from JSON
         try:
@@ -322,7 +324,13 @@ class Reliquary:
 
     # Executor of the API calls.
     # Takes optional arguments (variables, payload) depending on which method is used
-    def namshub(self, namshub_string, namshub_variables=False, namshub_dryrun=False, namshub_payload=False):
+    def namshub(
+        self,
+        namshub_string,
+        namshub_variables=False,
+        namshub_dryrun=False,
+        namshub_payload=False,
+    ):
         # Sanitize the verb used to uppercase, fewer changes for mixup
         namshub_verb = self.get_play_verb(namshub_string).lower().upper()
         # URI is in JSON file
@@ -358,7 +366,12 @@ class Reliquary:
             try:
                 namshub_payload = json.dumps(namshub_payload)
             except Exception as e:
-                sys.exit("Error processing API payload as " + str(type(namshub_payload)) + " " + str(e))
+                sys.exit(
+                    "Error processing API payload as "
+                    + str(type(namshub_payload))
+                    + " "
+                    + str(e)
+                )
 
         # Now that the transforms, testing, pre-processing are done, let's send to an API!
         if namshub_verb == "GET":

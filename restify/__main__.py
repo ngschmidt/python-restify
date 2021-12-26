@@ -60,7 +60,9 @@ if args.play == "create_settings":
 
 # Set the interface - apply from variables
 if api_endpoint and api_endpoint is str:
-    cogitation_interface = Reliquary(args.f, input_user=api_user, input_pass=api_pass, input_endpoint=api_endpoint)
+    cogitation_interface = Reliquary(
+        args.f, input_user=api_user, input_pass=api_pass, input_endpoint=api_endpoint
+    )
 else:
     cogitation_interface = Reliquary(args.f, input_user=api_user, input_pass=api_pass)
 
