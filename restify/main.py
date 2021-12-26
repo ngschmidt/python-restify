@@ -22,13 +22,6 @@ api_user = os.getenv("APIUSER")
 api_pass = os.getenv("APIPASS")
 api_endpoint = os.getenv("APIENDPOINT")
 
-# Let the user know if the envs aren't set up properly
-for env_mandatory in ["APIUSER", "APIPASS"]:
-    if env_mandatory not in os.environ:
-        sys.exit(
-            "Missing environment variable " + env_mandatory + " not found! Exiting..."
-        )
-
 play_help = (
     "Play to execute, Example: delete_do-things_<uuid>. \r\n"
     + "Other options: `list_plays`, or `create_settings` to build a settings file."
@@ -82,6 +75,13 @@ elif args.getplay or args.dryrun:
                 args.play, namshub_variables=args.vars, namshub_dryrun=True
             )
 else:
+    # Let the user know if the envs aren't set up properly
+    for env_mandatory in ["APIUSER", "APIPASS"]:
+        if env_mandatory not in os.environ:
+            sys.exit(
+                "Missing environment variable " + env_mandatory + " not found! Exiting..."
+            )
+
     # Provide an "overloading interface"
     if not args.vars:
         print(cogitation_interface.namshub(args.play))
