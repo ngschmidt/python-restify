@@ -379,7 +379,7 @@ class Reliquary:
                         namshub_payload[i] = namshub_variables[i]
 
         # Make sure that the payload is a string before shippinng it to the API
-        if namshub_payload and namshub_payload is not str:
+        if namshub_payload and namshub_payload not in [str, dict]:
             try:
                 namshub_payload = json.dumps(namshub_payload, indent=4)
             except Exception as e:
