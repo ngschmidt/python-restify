@@ -273,14 +273,27 @@ class Reliquary:
         try:
             do_api_url = self.cogitation_endpoint + do_api_uri
             self.validate_url(do_api_url)
-            if not do_api_dryrun:
+            if not do_api_dryrun and type(do_api_payload) is dict:
                 do_api_r = requests.request(
                     do_api_verb,
                     url=do_api_url,
                     headers=self.cogitation_headers,
                     verify=self.cogitation_certvalidation,
                     auth=(self.cogitation_username, self.cogitation_password),
-                    json=do_api_payload,
+                    json=do_api_payload
+                )
+                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
+                response_code = do_api_r.status_code
+                do_api_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
+                return do_api_r.text  # if HTTP status is good, save response
+            elif not do_api_dryrun and type(do_api_payload) is str:
+                do_api_r = requests.request(
+                    do_api_verb,
+                    url=do_api_url,
+                    headers=self.cogitation_headers,
+                    verify=self.cogitation_certvalidation,
+                    auth=(self.cogitation_username, self.cogitation_password),
+                    data=do_api_payload
                 )
                 # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
                 response_code = do_api_r.status_code
@@ -497,7 +510,7 @@ class Reliquary:
             return json.loads(input)
         except Exception as e:
             if self.cogitation_verbosity:
-                print(str(e))
+                print("Tried to load as a string, and found the following error: " + str(e))
             try:
                 # If it fails as a string, try to load as a file
                 return self.get_json_file(input)

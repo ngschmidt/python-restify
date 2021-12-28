@@ -15,7 +15,7 @@
 			"X-Allow-Overwrite": "true",
 			"X-Avi-Version": "21.1.3"
 		},
-		"endpoint": "http://avi.lab.engyak.net"
+		"endpoint": "https://avi.lab.engyak.net"
 	},
 	"plays": {
 		"get_version": {
