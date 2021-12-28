@@ -1,0 +1,13 @@
+{
+    "description": "my pool",
+    "name": "pool1",
+    "servers": [
+        {
+            "ip": {
+                "addr": "10.10.1.10",
+                "type": "V4"
+            },
+            "port": 80
+        }
+    ]
+}
