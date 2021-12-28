@@ -280,7 +280,7 @@ class Reliquary:
                     headers=self.cogitation_headers,
                     verify=self.cogitation_certvalidation,
                     auth=(self.cogitation_username, self.cogitation_password),
-                    json=do_api_payload
+                    json=do_api_payload,
                 )
                 # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
                 response_code = do_api_r.status_code
@@ -293,7 +293,7 @@ class Reliquary:
                     headers=self.cogitation_headers,
                     verify=self.cogitation_certvalidation,
                     auth=(self.cogitation_username, self.cogitation_password),
-                    data=do_api_payload
+                    data=do_api_payload,
                 )
                 # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
                 response_code = do_api_r.status_code
@@ -510,7 +510,10 @@ class Reliquary:
             return json.loads(input)
         except Exception as e:
             if self.cogitation_verbosity:
-                print("Tried to load as a string, and found the following error: " + str(e))
+                print(
+                    "Tried to load as a string, and found the following error: "
+                    + str(e)
+                )
             try:
                 # If it fails as a string, try to load as a file
                 return self.get_json_file(input)
