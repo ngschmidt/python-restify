@@ -278,7 +278,7 @@
 			"description": "Fetch NSX ALB Managed TLS Profiles",
 			"method": "PUT",
 			"requiresbody": true,
-			"requiresvariables": false,
+			"requiresvariables": true,
 			"variables": {
 				"id": false
 			},

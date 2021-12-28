@@ -339,6 +339,10 @@ class Reliquary:
         # If it already exists, you don't need to load it
         if not namshub_payload:
             namshub_payload = self.get_play_payload(namshub_string)
+        else:
+            # This payload would normally be a file, but we can process input too
+            # Let's fail-thru and try both methods
+            namshub_payload = self.get_json_file_or_string(namshub_payload)
         # Test to see if either variables or payloads are required
         # If they're required and not present, don't proceed
         if self.get_play_requiresvariables(namshub_string) and not namshub_variables:
@@ -347,7 +351,7 @@ class Reliquary:
             )
         if self.get_play_requiresbody(namshub_string) and not namshub_payload:
             sys.exit(
-                "Error: Payload required by play, but not provided! Specify as a JSON dictionary with `-b`"
+                "Error: Payload required by play, but not provided! Specify as a JSON dictionary with `-p`"
             )
 
         # Grab the variables, if it exists
@@ -364,7 +368,7 @@ class Reliquary:
         # Make sure that the payload is a string before shippinng it to the API
         if namshub_payload and namshub_payload is not str:
             try:
-                namshub_payload = json.dumps(namshub_payload)
+                namshub_payload = json.dumps(namshub_payload, indent=4)
             except Exception as e:
                 sys.exit(
                     "Error processing API payload as "
@@ -384,7 +388,7 @@ class Reliquary:
                 do_api_dryrun=namshub_dryrun,
             )
         elif namshub_verb == "DELETE":
-            return self.do_api_delete(namshub_resource)
+            return self.do_api_delete(namshub_resource, do_api_dryrun=namshub_dryrun)
         else:
             sys.exit("Unsupported API verb " + namshub_verb + "!")
 

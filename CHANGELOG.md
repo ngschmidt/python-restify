@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [28-Dec-2021] v0.2.0
+
+### Changed
+
+- Fixed Typo in `namshub`
+- Set `namshub` to process input for a given payload to be a file or a string
+- Fixed an issue where `args.dryrun` wasn't processed by `main` due to overly complex flow logic
+- Cleaned up `main`'s flow logic
+
 ## [25-Dec-2021] v0.1.13
 
 ### Added
