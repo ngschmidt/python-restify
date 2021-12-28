@@ -63,29 +63,38 @@ else:
 # Once the library is fired up and settings are loaded, offer the option to list any plays in the settings file
 if args.play == "list_plays":
     print(json.dumps(cogitation_interface.cogitation_bibliotheca, indent=4))
-elif args.getplay or args.dryrun:
-    if args.getplay:
-        print(
-            json.dumps(cogitation_interface.cogitation_bibliotheca[args.play], indent=4)
-        )
-    if args.dryrun:
-        if not args.vars:
-            cogitation_interface.namshub(args.play, namshub_dryrun=True)
-        else:
-            cogitation_interface.namshub(
-                args.play, namshub_variables=args.vars, namshub_dryrun=True
-            )
+elif args.getplay:
+    print(json.dumps(cogitation_interface.cogitation_bibliotheca[args.play], indent=4))
 else:
     # Let the user know if the envs aren't set up properly
     for env_mandatory in ["APIUSER", "APIPASS"]:
         if env_mandatory not in os.environ:
             sys.exit(
-                "Missing environment variable " + env_mandatory + " not found! Exiting..."
+                "Missing environment variable "
+                + env_mandatory
+                + " not found! Exiting..."
             )
     # Provide an "overloading interface"
-    if not args.vars:
-        print(cogitation_interface.namshub(args.play))
-    elif args.p:
-        print(cogitation_interface.namshub(args.play, namshub_variables=args.vars, namshub_payload=args.p))
+    if args.p and args.vars:
+        print(
+            cogitation_interface.namshub(
+                args.play,
+                namshub_variables=args.vars,
+                namshub_payload=args.p,
+                namshub_dryrun=args.dryrun,
+            )
+        )
+    elif args.vars and not args.p:
+        print(
+            cogitation_interface.namshub(
+                args.play, namshub_variables=args.vars, namshub_dryrun=args.dryrun
+            )
+        )
+    elif args.p and not args.vars:
+        print(
+            cogitation_interface.namshub(
+                args.play, namshub_payload=args.p, namshub_dryrun=args.dryrun
+            )
+        )
     else:
-        print(cogitation_interface.namshub(args.play, namshub_variables=args.vars))
+        print(cogitation_interface.namshub(args.play, namshub_dryrun=args.dryrun))
