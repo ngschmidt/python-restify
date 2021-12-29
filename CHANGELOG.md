@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [29-Dec-2021] v0.2.2
+
+### Changed
+
+- Added pretty-print function to `namshub`
+- Added HTTP, TLS profiles to `nsx-alb`
+- Fixed an issue where the URL validation function was always performed on `cogitation_endpoint`
+- More JSON Double-Encoding fixes
+
 ## [28-Dec-2021] v0.2.1
 
 ### Changed

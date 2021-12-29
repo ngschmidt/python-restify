@@ -51,6 +51,45 @@
 			"requiresbody": true,
 			"requiresvariables": false
 		},
+		"update_tls_profile": {
+			"uri": "/api/sslprofile",
+			"description": "Create Managed SSL Profile",
+			"method": "PATCH",
+			"requiresbody": true,
+			"requiresvariables": false
+		},
+		"get_app_profiles": {
+			"uri": "/api/applicationprofile",
+			"description": "Fetch Managed Application Profiles",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}
+		},
+		"get_app_profile": {
+			"uri": "/api/applicationprofile/{{ id }}",
+			"description": "Fetch Managed Application Profile",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": false
+			}
+		},
+		"create_app_profile": {
+			"uri": "/api/applicationprofile",
+			"description": "Create Managed Application Profile",
+			"method": "POST",
+			"requiresbody": true,
+			"requiresvariables": false
+		},
+		"update_app_profile": {
+			"uri": "/api/applicationprofile",
+			"description": "Create Managed Application Profile",
+			"method": "PATCH",
+			"requiresbody": true,
+			"requiresvariables": false
+		},
 		"get_pools": {
 			"uri": "/api/pool",
 			"description": "Get Load Balancer Pool",
