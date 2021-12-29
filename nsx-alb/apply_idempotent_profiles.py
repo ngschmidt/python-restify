@@ -10,9 +10,6 @@ import sys
 # REST Client
 from restify.RuminatingCogitation import Reliquary
 
-# JSON
-import json
-
 # Let the user know if the envs aren't set up properly
 for env_mandatory in ["APIUSER", "APIPASS"]:
     if env_mandatory not in os.environ:
@@ -60,9 +57,26 @@ for i in os.listdir("profiles/tls"):
         "result": "",
     }
 
-# Attempt to Apply as new profiles first
-# Then if that fails, try to find them via the list
-# Test to see if there's a difference between what we have in Git and the deployment
+# Attempt to Apply as new profiles first. Save the results under 'result' for processing later
+# Apps
+for i in work_dict["application_profiles"]:
+    work_dict["application_profiles"][i]["result"] = cogitation_interface.namshub(
+        "create_app_profile",
+        namshub_payload=work_dict["application_profiles"][i]["profile"],
+    )
+# TLS
+for i in work_dict["tls_profiles"]:
+    work_dict["tls_profiles"][i]["result"] = cogitation_interface.namshub(
+        "create_tls_profile",
+        namshub_payload=work_dict["tls_profiles"][i]["profile"],
+    )
+
+# Search through the `dict` to find application failures. Make a `list`
+
+# Grab existing profiles
+
+# Search existing profiles to see if there's a difference between what we have in Git and the deployment
+
 # Then try and PUT them based on that UUID if it's different
-print(type(work_dict))
-print(json.dumps(work_dict, indent=2))
+
+print(cogitation_interface.json_prettyprint(work_dict))
