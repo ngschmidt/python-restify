@@ -1,5 +1,5 @@
 {
-    "name": "http-profile-Jenkins",
+    "name": "http-profile-tlsoffload",
     "type": "APPLICATION_PROFILE_TYPE_HTTP",
     "http_profile": {
       "connection_multiplexing_enabled": false,
