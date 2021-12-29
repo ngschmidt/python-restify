@@ -1,10 +1,6 @@
 {
-    "url": "https://avi.lab.engyak.net/api/applicationprofile/applicationprofile-680bf509-219b-4748-a021-35b515372a86",
-    "uuid": "applicationprofile-680bf509-219b-4748-a021-35b515372a86",
     "name": "http-profile-Jenkins",
     "type": "APPLICATION_PROFILE_TYPE_HTTP",
-    "tenant_ref": "https://avi.lab.engyak.net/api/tenant/admin",
-    "_last_modified": "1640800084578325",
     "http_profile": {
       "connection_multiplexing_enabled": false,
       "xff_enabled": true,
