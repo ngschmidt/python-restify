@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Applied `black` formatting
 - Added idempotent function for NSX ALB Profiles
+- Fixed internal pretty print function
 
 ## [29-Dec-2021] v0.2.2
 
