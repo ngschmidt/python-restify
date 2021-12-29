@@ -30,6 +30,8 @@ cogitation_interface = Reliquary(args.f, input_user=api_user, input_pass=api_pas
 
 # Iterate thru easy test cases
 for i in cogitation_interface.cogitation_bibliotheca:
-    if not cogitation_interface.get_play_requiresbody(i) and not cogitation_interface.get_play_requiresvariables(i):
+    if not cogitation_interface.get_play_requiresbody(
+        i
+    ) and not cogitation_interface.get_play_requiresvariables(i):
         print(cogitation_interface.namshub(i, namshub_variables=args.vars))
 # More coverage testing should go here

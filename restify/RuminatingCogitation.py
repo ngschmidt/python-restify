@@ -273,7 +273,12 @@ class Reliquary:
 
     # Do API POST, using basic credentials
     def do_api_pass(
-        self, do_api_uri, do_api_verb="GET", do_api_payload=False, do_api_dryrun=False, do_api_json_pretty=False
+        self,
+        do_api_uri,
+        do_api_verb="GET",
+        do_api_payload=False,
+        do_api_dryrun=False,
+        do_api_json_pretty=False,
     ):
         # Perform API Processing - conditional basic authentication
         try:
@@ -318,9 +323,7 @@ class Reliquary:
                     "do_api_verb": do_api_verb,
                     "do_api_payload": json.loads(do_api_payload),
                 }
-                print(
-                    self.json_prettyprint(do_api_dryrun_report)
-                )
+                print(self.json_prettyprint(do_api_dryrun_report))
         except requests.Timeout:
             print("E1000: API Connection timeout!")
         except requests.ConnectionError as connection_error:
@@ -353,7 +356,7 @@ class Reliquary:
         namshub_variables=False,
         namshub_dryrun=False,
         namshub_payload=False,
-        namshub_json_pretty=True
+        namshub_json_pretty=True,
     ):
         # Sanitize the verb used to uppercase, fewer changes for mixup
         namshub_verb = self.get_play_verb(namshub_string).lower().upper()
@@ -403,16 +406,25 @@ class Reliquary:
 
         # Now that the transforms, testing, pre-processing are done, let's send to an API!
         if namshub_verb == "GET":
-            return self.do_api_get(namshub_resource, do_api_dryrun=namshub_dryrun, do_api_json_pretty=namshub_json_pretty)
+            return self.do_api_get(
+                namshub_resource,
+                do_api_dryrun=namshub_dryrun,
+                do_api_json_pretty=namshub_json_pretty,
+            )
         elif namshub_verb == "POST" or namshub_verb == "PATCH" or namshub_verb == "PUT":
             return self.do_api_pass(
                 namshub_resource,
                 do_api_payload=namshub_payload,
                 do_api_verb=namshub_verb,
-                do_api_dryrun=namshub_dryrun, do_api_json_pretty=namshub_json_pretty
+                do_api_dryrun=namshub_dryrun,
+                do_api_json_pretty=namshub_json_pretty,
             )
         elif namshub_verb == "DELETE":
-            return self.do_api_delete(namshub_resource, do_api_dryrun=namshub_dryrun, do_api_json_pretty=namshub_json_pretty)
+            return self.do_api_delete(
+                namshub_resource,
+                do_api_dryrun=namshub_dryrun,
+                do_api_json_pretty=namshub_json_pretty,
+            )
         else:
             sys.exit("Unsupported API verb " + namshub_verb + "!")
 
@@ -439,18 +451,34 @@ class Reliquary:
         try:
             validate(validate_url_url)
         except Exception as e:
-            print('E0001: Invalid URL Formatting. You provided: ' + validate_url_url + 'Example: "https://www.abc.com/"')
+            print(
+                "E0001: Invalid URL Formatting. You provided: "
+                + validate_url_url
+                + 'Example: "https://www.abc.com/"'
+            )
             exit(str(e))
 
     def json_prettyprint(self, json_prettyprint_input):
         # Print out in visually readable JSON
-        if json_prettyprint_input is dict:
+        if type(json_prettyprint_input) is dict:
             return json.dumps(json_prettyprint_input, indent=4)
-        elif json_prettyprint_input is str:
+        elif type(json_prettyprint_input) is str:
             try:
                 return json.dumps(json.loads(json_prettyprint_input), indent=4)
             except Exception as e:
-                sys.exit("Exception occurred while trying to pretty print the following:\r\n" + e + "\r\n" + json_prettyprint_input)
+                sys.exit(
+                    "Exception occurred while trying to pretty print the following:\r\n"
+                    + e
+                    + "\r\n"
+                    + json_prettyprint_input
+                )
+        else:
+            sys.exit(
+                "Unknown Object Type: "
+                + type(json_prettyprint_input)
+                + "with a printed value of "
+                + str(json_prettyprint_input)
+            )
 
     def get_http_error_code(self, get_http_error_code_code):
         get_http_error_code_code = str(get_http_error_code_code)
