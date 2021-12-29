@@ -52,9 +52,9 @@
 			"requiresvariables": false
 		},
 		"update_tls_profile": {
-			"uri": "/api/sslprofile",
+			"uri": "/api/sslprofile/{{ id }}",
 			"description": "Create Managed SSL Profile",
-			"method": "PATCH",
+			"method": "PUT",
 			"requiresbody": true,
 			"requiresvariables": false
 		},
@@ -84,11 +84,11 @@
 			"requiresvariables": false
 		},
 		"update_app_profile": {
-			"uri": "/api/applicationprofile",
+			"uri": "/api/applicationprofile/{{ id }}",
 			"description": "Create Managed Application Profile",
-			"method": "PATCH",
+			"method": "PUT",
 			"requiresbody": true,
-			"requiresvariables": false
+			"requiresvariables": true
 		},
 		"get_pools": {
 			"uri": "/api/pool",

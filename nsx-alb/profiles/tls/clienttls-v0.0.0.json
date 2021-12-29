@@ -24,6 +24,7 @@
   "display_name": "clienttls-v0.0.0",
   "enable_early_data": false,
   "enable_ssl_session_reuse": true,
+  "name": "clienttls-v0.0.0",
   "prefer_client_cipher_ordering": false,
   "send_close_notify": true,
   "ssl_rating": {
