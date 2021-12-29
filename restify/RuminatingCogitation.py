@@ -163,7 +163,7 @@ class Reliquary:
     # Functions
 
     # Do API DELETE, using basic credentials
-    def do_api_delete(self, do_api_uri, do_api_dryrun=False):
+    def do_api_delete(self, do_api_uri, do_api_dryrun=False, do_api_json_pretty=False):
         # Perform API Processing - conditional basic authentication
         try:
             do_api_delete_url = self.cogitation_endpoint + do_api_uri
@@ -179,7 +179,10 @@ class Reliquary:
                 response_code = do_api_delete_r.status_code
                 print(response_code)
                 do_api_delete_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
-                return do_api_delete_r.text  # if HTTP status is good, save response
+                if do_api_json_pretty:
+                    return self.json_prettyprint(do_api_delete_r.text)
+                else:
+                    return do_api_delete_r.text  # if HTTP status is good, save response
             else:
                 print(
                     json.dumps(
@@ -215,7 +218,7 @@ class Reliquary:
             exit()
 
     # Do API GET, using basic credentials
-    def do_api_get(self, do_api_uri, do_api_dryrun=False):
+    def do_api_get(self, do_api_uri, do_api_dryrun=False, do_api_json_pretty=False):
         # Perform API Processing - conditional basic authentication
         try:
             do_api_get_url = self.cogitation_endpoint + do_api_uri
@@ -230,7 +233,10 @@ class Reliquary:
                 # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
                 response_code = do_api_get_r.status_code
                 do_api_get_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
-                return do_api_get_r.text  # if HTTP status is good, save response
+                if do_api_json_pretty:
+                    return self.json_prettyprint(do_api_get_r.text)
+                else:
+                    return do_api_get_r.text  # if HTTP status is good, save response
             else:
                 print(
                     json.dumps(
@@ -267,7 +273,7 @@ class Reliquary:
 
     # Do API POST, using basic credentials
     def do_api_pass(
-        self, do_api_uri, do_api_verb="GET", do_api_payload=False, do_api_dryrun=False
+        self, do_api_uri, do_api_verb="GET", do_api_payload=False, do_api_dryrun=False, do_api_json_pretty=False
     ):
         # Perform API Processing - conditional basic authentication
         try:
@@ -285,7 +291,10 @@ class Reliquary:
                 # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
                 response_code = do_api_r.status_code
                 do_api_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
-                return do_api_r.text  # if HTTP status is good, save response
+                if do_api_json_pretty:
+                    return self.json_prettyprint(do_api_r.text)
+                else:
+                    return do_api_r.text  # if HTTP status is good, save response
             elif not do_api_dryrun and type(do_api_payload) is str:
                 do_api_r = requests.request(
                     do_api_verb,
@@ -298,18 +307,19 @@ class Reliquary:
                 # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
                 response_code = do_api_r.status_code
                 do_api_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
-                return do_api_r.text  # if HTTP status is good, save response
+                if do_api_json_pretty:
+                    return self.json_prettyprint(do_api_r.text)
+                else:
+                    return do_api_r.text  # if HTTP status is good, save response
             else:
+                do_api_dryrun_report = {
+                    "do_api_get_headers": self.cogitation_headers,
+                    "do_api_get_url": do_api_url,
+                    "do_api_verb": do_api_verb,
+                    "do_api_payload": json.loads(do_api_payload),
+                }
                 print(
-                    json.dumps(
-                        {
-                            "do_api_get_headers": self.cogitation_headers,
-                            "do_api_get_url": do_api_url,
-                            "do_api_verb": do_api_verb,
-                            "do_api_payload": do_api_payload,
-                        },
-                        indent=4,
-                    )
+                    self.json_prettyprint(do_api_dryrun_report)
                 )
         except requests.Timeout:
             print("E1000: API Connection timeout!")
@@ -343,6 +353,7 @@ class Reliquary:
         namshub_variables=False,
         namshub_dryrun=False,
         namshub_payload=False,
+        namshub_json_pretty=True
     ):
         # Sanitize the verb used to uppercase, fewer changes for mixup
         namshub_verb = self.get_play_verb(namshub_string).lower().upper()
@@ -392,16 +403,16 @@ class Reliquary:
 
         # Now that the transforms, testing, pre-processing are done, let's send to an API!
         if namshub_verb == "GET":
-            return self.do_api_get(namshub_resource, do_api_dryrun=namshub_dryrun)
+            return self.do_api_get(namshub_resource, do_api_dryrun=namshub_dryrun, do_api_json_pretty=namshub_json_pretty)
         elif namshub_verb == "POST" or namshub_verb == "PATCH" or namshub_verb == "PUT":
             return self.do_api_pass(
                 namshub_resource,
                 do_api_payload=namshub_payload,
                 do_api_verb=namshub_verb,
-                do_api_dryrun=namshub_dryrun,
+                do_api_dryrun=namshub_dryrun, do_api_json_pretty=namshub_json_pretty
             )
         elif namshub_verb == "DELETE":
-            return self.do_api_delete(namshub_resource, do_api_dryrun=namshub_dryrun)
+            return self.do_api_delete(namshub_resource, do_api_dryrun=namshub_dryrun, do_api_json_pretty=namshub_json_pretty)
         else:
             sys.exit("Unsupported API verb " + namshub_verb + "!")
 
@@ -426,10 +437,20 @@ class Reliquary:
         # 99% solution here is to validate that a URL provided is valid. This doesn't test it or anything
         validate = URLValidator()
         try:
-            validate(self.cogitation_endpoint)
+            validate(validate_url_url)
         except Exception as e:
-            print('E0001: Invalid URL Formatting. Example: "https://www.abc.com/"')
+            print('E0001: Invalid URL Formatting. You provided: ' + validate_url_url + 'Example: "https://www.abc.com/"')
             exit(str(e))
+
+    def json_prettyprint(self, json_prettyprint_input):
+        # Print out in visually readable JSON
+        if json_prettyprint_input is dict:
+            return json.dumps(json_prettyprint_input, indent=4)
+        elif json_prettyprint_input is str:
+            try:
+                return json.dumps(json.loads(json_prettyprint_input), indent=4)
+            except Exception as e:
+                sys.exit("Exception occurred while trying to pretty print the following:\r\n" + e + "\r\n" + json_prettyprint_input)
 
     def get_http_error_code(self, get_http_error_code_code):
         get_http_error_code_code = str(get_http_error_code_code)
