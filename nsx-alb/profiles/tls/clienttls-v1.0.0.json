@@ -5,6 +5,10 @@
     { "type": "SSL_VERSION_TLS1_3" }
   ],
   "ciphersuites": "TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256",
+  "enable_early_data": false,
+  "enable_ssl_session_reuse": true,
   "name": "clienttls-v1.0.0",
-  "resource_type": "ALBSSLProfile"
+  "prefer_client_cipher_ordering": false,
+  "resource_type": "ALBSSLProfile",
+  "ssl_session_timeout": 86400
 }
