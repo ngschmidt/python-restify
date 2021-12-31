@@ -7,11 +7,121 @@
 import os
 import sys
 
+# JSON
+import json
+
+# Impot DeepDiff. We need this to compare dictionaries
+import deepdiff
+
 # REST Client
 from restify.RuminatingCogitation import Reliquary
 
-# JSON
-import json
+
+# Find Element in list (based on name)
+def find_element_in_list(find_list, find_element):
+    for i in find_list:
+        if type(i) is dict and i["name"] == find_element:
+            return i
+    return None
+
+
+# Recursively converge application profiles
+def converge_app_profile(app_profile_dict):
+    # First, grab a copy of the existing application profile
+    before_app_profile = json.loads(
+        cogitation_interface.namshub(
+            "get_app_profile", namshub_variables={"id": app_profile_dict["uuid"]}
+        )
+    )
+
+    # Fastest and cheapest compare operation first
+    if not app_profile_dict["profile"] == before_app_profile:
+        # Build a deep difference of the two dictionaries, removing attributes that are not part of the profile, but the API generates
+        diff_app_profile = deepdiff.DeepDiff(
+            before_app_profile,
+            app_profile_dict["profile"],
+            exclude_paths=[
+                "root['uuid']",
+                "root['url']",
+                "root['uuid']",
+                "root['_last_modified']",
+                "root['tenant_ref']",
+            ],
+        )
+
+        # If there are differences, try to fix them at least 3 times
+        if len(diff_app_profile) > 0 and app_profile_dict["retries"] < 3:
+            print("Difference between dictionaries found: " + str(diff_app_profile))
+            print(
+                "Converging "
+                + app_profile_dict["profile"]["name"]
+                + " attempt # "
+                + str(app_profile_dict["retries"] + 1)
+            )
+            # Increment retry counter
+            app_profile_dict["retries"] += 1
+            # Then perform Update verb on profile
+            cogitation_interface.namshub(
+                "update_app_profile",
+                namshub_payload=app_profile_dict["profile"],
+                namshub_variables={"id": app_profile_dict["uuid"]},
+            )
+            # Perform recursion
+            converge_app_profile(app_profile_dict)
+        else:
+            return before_app_profile
+
+
+# Recursively converge TLS profiles
+def converge_tls_profile(tls_profile_dict):
+    # First, grab a copy of the existing tls profile
+    before_tls_profile = json.loads(
+        cogitation_interface.namshub(
+            "get_tls_profile", namshub_variables={"id": tls_profile_dict["uuid"]}
+        )
+    )
+
+    # Fastest and cheapest compare operation first
+    if not tls_profile_dict["profile"] == before_tls_profile:
+        # Build a deep difference of the two dictionaries, removing attributes that are not part of the profile, but the API generates
+
+        diff_tls_profile = deepdiff.DeepDiff(
+            before_tls_profile,
+            tls_profile_dict["profile"],
+            exclude_paths=[
+                "root['uuid']",
+                "root['url']",
+                "root['uuid']",
+                "root['_last_modified']",
+                "root['tenant_ref']",
+                "root['display_name']",
+                "root['ec_named_curve']",
+                "root['signature_algorithm']",
+            ],
+        )
+
+        # If there are differences, try to fix them at least 3 times
+        if len(diff_tls_profile) > 0 and tls_profile_dict["retries"] < 3:
+            print("Difference between dictionaries found: " + str(diff_tls_profile))
+            print(
+                "Converging "
+                + tls_profile_dict["profile"]["name"]
+                + " attempt # "
+                + str(tls_profile_dict["retries"] + 1)
+            )
+            # Increment retry counter
+            tls_profile_dict["retries"] += 1
+            # Then Perform Update verb on profile
+            cogitation_interface.namshub(
+                "update_tls_profile",
+                namshub_payload=tls_profile_dict["profile"],
+                namshub_variables={"id": tls_profile_dict["uuid"]},
+            )
+            # Perform recursion
+            converge_tls_profile(tls_profile_dict)
+        else:
+            return before_tls_profile
+
 
 # Let the user know if the envs aren't set up properly
 for env_mandatory in ["APIUSER", "APIPASS"]:
@@ -46,6 +156,7 @@ for i in os.listdir("profiles/http"):
         "uuid": "",
         "profile": profile_temp,
         "result": "",
+        "retries": 0,
     }
 
 # TLS
@@ -58,11 +169,51 @@ for i in os.listdir("profiles/tls"):
         "uuid": "",
         "profile": profile_temp,
         "result": "",
+        "retries": 0,
     }
 
-# Attempt to Apply as new profiles first
-# Then if that fails, try to find them via the list
-# Test to see if there's a difference between what we have in Git and the deployment
-# Then try and PUT them based on that UUID if it's different
-print(type(work_dict))
-print(json.dumps(work_dict, indent=2))
+# Collect Remote Configurations
+apps_dict = json.loads(cogitation_interface.namshub("get_app_profiles"))["results"]
+tls_dict = json.loads(cogitation_interface.namshub("get_tls_profiles"))["results"]
+
+# Attempt to Apply as new profiles first. Save the results under 'result' for processing later
+# Apps
+for i in work_dict["application_profiles"]:
+    # Try to find an existing profile
+    existing_profile = find_element_in_list(apps_dict, i)
+
+    # If one doesn't exist, try and create it
+    if existing_profile is None:
+        work_dict["application_profiles"][i]["result"] = cogitation_interface.namshub(
+            "create_app_profile",
+            namshub_payload=work_dict["application_profiles"][i]["profile"],
+        )
+    # If one does exist, converge it
+    else:
+        work_dict["application_profiles"][i]["uuid"] = existing_profile["uuid"]
+        converge_app_profile(work_dict["application_profiles"][i])
+        work_dict["application_profiles"][i]["result"] = converge_app_profile(
+            work_dict["application_profiles"][i]
+        )
+
+# TLS
+for i in work_dict["tls_profiles"]:
+    # Try to find an existing profile
+    existing_profile = find_element_in_list(tls_dict, i)
+
+    # If one doesn't exist, try and create it
+    if existing_profile is None:
+        work_dict["tls_profiles"][i]["result"] = cogitation_interface.namshub(
+            "create_tls_profile",
+            namshub_payload=work_dict["tls_profiles"][i]["profile"],
+        )
+
+    # If one does exist, converge it
+    else:
+        work_dict["tls_profiles"][i]["uuid"] = existing_profile["uuid"]
+        converge_tls_profile(work_dict["tls_profiles"][i])
+        work_dict["tls_profiles"][i]["result"] = converge_app_profile(
+            work_dict["tls_profiles"][i]
+        )
+
+print(cogitation_interface.json_prettyprint(work_dict))

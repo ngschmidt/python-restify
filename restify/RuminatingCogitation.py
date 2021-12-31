@@ -206,6 +206,8 @@ class Reliquary:
                     + str(response_code)
                     + " "
                     + self.get_http_error_code(response_code)
+                    + ": "
+                    + do_api_delete_url
                 )
                 return do_api_delete_r.text
             else:
@@ -260,6 +262,8 @@ class Reliquary:
                     + str(response_code)
                     + " "
                     + self.get_http_error_code(response_code)
+                    + ": "
+                    + do_api_get_url
                 )
                 return do_api_get_r.text
             else:
@@ -337,6 +341,8 @@ class Reliquary:
                     + str(response_code)
                     + " "
                     + self.get_http_error_code(response_code)
+                    + ": "
+                    + do_api_url
                 )
                 return do_api_r.text
             else:
