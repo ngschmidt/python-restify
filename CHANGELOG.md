@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [31-Dec-2021] v0.2.4
+
+### Changed
+
+- API pass functions will now include the attempted URL with HTTP status code failures
+
 ## [29-Dec-2021] v0.2.3
 
 ### Changed
