@@ -97,6 +97,11 @@ def converge_tls_profile(tls_profile_dict):
                 "root['display_name']",
                 "root['ec_named_curve']",
                 "root['signature_algorithm']",
+                "root['ssl_rating']",
+                "root['send_close_notify']",
+                "root['dhparam']",
+                "root['type']",
+                "root['resource_type']",
             ],
         )
 
@@ -212,8 +217,9 @@ for i in work_dict["tls_profiles"]:
     else:
         work_dict["tls_profiles"][i]["uuid"] = existing_profile["uuid"]
         converge_tls_profile(work_dict["tls_profiles"][i])
-        work_dict["tls_profiles"][i]["result"] = converge_app_profile(
+        work_dict["tls_profiles"][i]["result"] = converge_tls_profile(
             work_dict["tls_profiles"][i]
         )
 
+print("Profile convergence report:")
 print(cogitation_interface.json_prettyprint(work_dict))
