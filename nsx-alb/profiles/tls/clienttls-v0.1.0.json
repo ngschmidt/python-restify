@@ -1,5 +1,5 @@
 {
-    "name": "clienttls-prototype-v0.1.0",
+    "name": "clienttls-v0.1.0",
     "accepted_versions": [
         {
             "type": "SSL_VERSION_TLS1_2"
