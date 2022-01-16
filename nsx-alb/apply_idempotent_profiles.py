@@ -189,6 +189,11 @@ for i in os.listdir("profiles/tls"):
 apps_dict = json.loads(cogitation_interface.namshub("get_app_profiles"))["results"]
 tls_dict = json.loads(cogitation_interface.namshub("get_tls_profiles"))["results"]
 
+# Build a summary section in the `dict`
+work_dict["summary"] = {}
+work_dict["summary"]["apps"] = {}
+work_dict["summary"]["tls"] = {}
+
 # Attempt to Apply as new profiles first. Save the results under 'result' for processing later
 # Apps
 for i in work_dict["application_profiles"]:
@@ -201,6 +206,8 @@ for i in work_dict["application_profiles"]:
             "create_app_profile",
             namshub_payload=work_dict["application_profiles"][i]["profile"],
         )
+        work_dict["summary"]["apps"][i] = "created"
+
     # If one does exist, converge it
     else:
         work_dict["application_profiles"][i]["uuid"] = existing_profile["uuid"]
@@ -208,6 +215,7 @@ for i in work_dict["application_profiles"]:
         work_dict["application_profiles"][i]["result"] = converge_app_profile(
             work_dict["application_profiles"][i]
         )
+        work_dict["summary"]["apps"][i] = "changed"
 
 # TLS
 for i in work_dict["tls_profiles"]:
@@ -220,6 +228,7 @@ for i in work_dict["tls_profiles"]:
             "create_tls_profile",
             namshub_payload=work_dict["tls_profiles"][i]["profile"],
         )
+        work_dict["summary"]["tls"][i] = "created"
 
     # If one does exist, converge it
     else:
@@ -228,11 +237,12 @@ for i in work_dict["tls_profiles"]:
         work_dict["tls_profiles"][i]["result"] = converge_tls_profile(
             work_dict["tls_profiles"][i]
         )
+        work_dict["summary"]["tls"][i] = "changed"
+
 
 print("Profile convergence report:")
-print(cogitation_interface.json_prettyprint(work_dict))
+print(cogitation_interface.json_prettyprint(work_dict["summary"]))
 finished_datetime = datetime.now()
-print(finished_datetime.strftime("%Y%m%d%H%M%S"))
 write_json_to_file(
     work_dict, "results_" + str(finished_datetime.strftime("%Y%m%d%H%M%S")) + ".json"
 )
