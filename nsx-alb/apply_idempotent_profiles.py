@@ -10,8 +10,11 @@ import sys
 # JSON
 import json
 
-# Impot DeepDiff. We need this to compare dictionaries
+# Import DeepDiff. We need this to compare dictionaries
 import deepdiff
+
+# Datetime for logging
+from datetime import datetime
 
 # REST Client
 from restify.RuminatingCogitation import Reliquary
@@ -70,6 +73,11 @@ def converge_app_profile(app_profile_dict):
             converge_app_profile(app_profile_dict)
         else:
             return before_app_profile
+
+
+def write_json_to_file(json_input, filename):
+    with open(filename, "w") as filehandle:
+        json.dump(json_input, filehandle, indent=2)
 
 
 # Recursively converge TLS profiles
@@ -223,3 +231,8 @@ for i in work_dict["tls_profiles"]:
 
 print("Profile convergence report:")
 print(cogitation_interface.json_prettyprint(work_dict))
+finished_datetime = datetime.now()
+print(finished_datetime.strftime("%Y%m%d%H%M%S"))
+write_json_to_file(
+    work_dict, "results_" + str(finished_datetime.strftime("%Y%m%d%H%M%S")) + ".json"
+)
