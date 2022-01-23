@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # Python NSX-T Fullbogon lists
+# This implementation has a maximum of 4,000 entries
 # Nicholas Schmidt
 # 24-Dec-2021
 
