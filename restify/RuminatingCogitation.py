@@ -126,8 +126,7 @@ class Reliquary:
             with open(input_settings, "r") as json_filehandle:
                 json_settings = json.load(json_filehandle)
         except Exception as e:
-            print("E0000: Error Loading Settings File: " + str(e))
-            exit()
+            exit("E0000: Error Loading Settings File: " + str(e))
 
         try:
             # Let's start with basic global settings
@@ -212,12 +211,18 @@ class Reliquary:
                 return do_api_delete_r.text
             else:
                 print("EA999: Unhandled HTTP Error " + str(response_code) + "!")
-                exit()  # interpet the error, then close out so we don't have to put all the rest of our code in an except statement
         except requests.RequestException as requests_exception:
             print(requests_exception)
         except Exception as e:
-            print("E1002: Unhandled Requests exception! " + str(e))
-            exit()
+            print(
+                "E1002: Unhandled Requests exception! "
+                + str(e)
+                + " with endpoint "
+                + do_api_delete_url
+                + "and response "
+                + do_api_delete_r.text
+            )
+            print(str(e))
 
     # Do API GET, using basic credentials
     def do_api_get(self, do_api_uri, do_api_dryrun=False, do_api_json_pretty=False):
@@ -268,12 +273,18 @@ class Reliquary:
                 return do_api_get_r.text
             else:
                 print("EA999: Unhandled HTTP Error " + str(response_code) + "!")
-                exit()  # interpet the error, then close out so we don't have to put all the rest of our code in an except statement
         except requests.RequestException as requests_exception:
             print(requests_exception)
         except Exception as e:
-            print("E1002: Unhandled Requests exception! " + str(e))
-            exit()
+            print(
+                "E1002: Unhandled Requests exception! "
+                + str(e)
+                + " with endpoint "
+                + do_api_get_url
+                + "and response "
+                + do_api_get_r.text
+            )
+            print(str(e))
 
     # Do API POST, using basic credentials
     def do_api_pass(
@@ -323,7 +334,7 @@ class Reliquary:
             else:
                 do_api_dryrun_report = {
                     "do_api_get_headers": self.cogitation_headers,
-                    "do_api_get_url": do_api_url,
+                    "do_api_url": do_api_url,
                     "do_api_verb": do_api_verb,
                     "do_api_payload": json.loads(do_api_payload),
                 }
@@ -347,12 +358,18 @@ class Reliquary:
                 return do_api_r.text
             else:
                 print("EA999: Unhandled HTTP Error " + str(response_code) + "!")
-                exit()  # interpet the error, then close out so we don't have to put all the rest of our code in an except statement
         except requests.RequestException as requests_exception:
             print(requests_exception)
         except Exception as e:
-            print("E1002: Unhandled Requests exception! " + str(e))
-            exit()
+            print(
+                "E1002: Unhandled Requests exception! "
+                + str(e)
+                + " with endpoint "
+                + do_api_url
+                + "and response "
+                + do_api_r.text
+            )
+            print(str(e))
 
     # Executor of the API calls.
     # Takes optional arguments (variables, payload) depending on which method is used
@@ -553,8 +570,7 @@ class Reliquary:
             with open(filename, "r") as json_filehandle:
                 return json.load(json_filehandle)
         except Exception as e:
-            print("E0000: Error Loading Settings File " + filename + ": " + str(e))
-            exit()
+            exit("E0000: Error Loading Settings File " + filename + ": " + str(e))
 
     def get_json_file_or_string(self, input):
         # Recursive method to return a dictionary even if we're passed a dictionary
