@@ -36,12 +36,12 @@ def validate_ip_network(input_to_validate):
         )
 
 
-def assemble_nsgroup(input_obj_name, input_obj_list):
+def assemble_nsgroup(input_obj_list):
     patch_dict = {
         "expression": [
             {
                 "ip_addresses": [
-                    "1.1.1.1/32"
+                    input_obj_list
                 ],
                 "resource_type": "IPAddressExpression"
             }
@@ -95,7 +95,7 @@ nsgroup_name = "cymru_ipv4_fullbogons"
 cogitation_interface.namshub(
     "patch_policy_inventory_group",
     namshub_variables={"domain": "default", "id": nsgroup_name},
-    namshub_payload=assemble_nsgroup(nsgroup_name, fullbogon_list_validated),
+    namshub_payload=assemble_nsgroup(fullbogon_list_validated),
 )
 
 # Validate the PATCH
@@ -104,6 +104,5 @@ implemented_object = cogitation_interface.namshub(
     namshub_variables={"domain": "default", "id": nsgroup_name},
 )
 implemented_ip_list = implemented_object["expression"]["ip_addresses"]
-print("abc")
 print(implemented_ip_list)
 print(DeepDiff(fullbogon_list_validated, implemented_ip_list, ignore_order=True))
