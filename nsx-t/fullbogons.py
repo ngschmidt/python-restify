@@ -40,9 +40,7 @@ def assemble_nsgroup(input_obj_list):
     patch_dict = {
         "expression": [
             {
-                "ip_addresses": [
-                    input_obj_list
-                ],
+                "ip_addresses": input_obj_list,
                 "resource_type": "IPAddressExpression"
             }
         ],
@@ -99,10 +97,10 @@ cogitation_interface.namshub(
 )
 
 # Validate the PATCH
-implemented_object = cogitation_interface.namshub(
+implemented_object = json.loads(cogitation_interface.namshub(
     "get_policy_inventory_group",
     namshub_variables={"domain": "default", "id": nsgroup_name},
-)
-implemented_ip_list = implemented_object["expression"]["ip_addresses"]
-print(implemented_ip_list)
-print(DeepDiff(fullbogon_list_validated, implemented_ip_list, ignore_order=True))
+))
+implemented_ip_list = implemented_object["expression"][0]["ip_addresses"]
+
+print("Difference between desired state and realized state: " + str(DeepDiff(fullbogon_list_validated, implemented_ip_list, ignore_order=True)))
