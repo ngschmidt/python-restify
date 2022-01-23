@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # Python NSX-T Fullbogon lists
+# This implementation has a maximum of 4,000 entries
 # Nicholas Schmidt
 # 24-Dec-2021
 
@@ -36,13 +37,11 @@ def validate_ip_network(input_to_validate):
         )
 
 
-def assemble_nsgroup(input_obj_name, input_obj_list):
+def assemble_nsgroup(input_obj_list):
     patch_dict = {
         "expression": [
             {
-                "ip_addresses": [
-                    "1.1.1.1/32"
-                ],
+                "ip_addresses": input_obj_list,
                 "resource_type": "IPAddressExpression"
             }
         ],
@@ -95,15 +94,14 @@ nsgroup_name = "cymru_ipv4_fullbogons"
 cogitation_interface.namshub(
     "patch_policy_inventory_group",
     namshub_variables={"domain": "default", "id": nsgroup_name},
-    namshub_payload=assemble_nsgroup(nsgroup_name, fullbogon_list_validated),
+    namshub_payload=assemble_nsgroup(fullbogon_list_validated),
 )
 
 # Validate the PATCH
-implemented_object = cogitation_interface.namshub(
+implemented_object = json.loads(cogitation_interface.namshub(
     "get_policy_inventory_group",
     namshub_variables={"domain": "default", "id": nsgroup_name},
-)
-implemented_ip_list = implemented_object["expression"]["ip_addresses"]
-print("abc")
-print(implemented_ip_list)
-print(DeepDiff(fullbogon_list_validated, implemented_ip_list, ignore_order=True))
+))
+implemented_ip_list = implemented_object["expression"][0]["ip_addresses"]
+
+print("Difference between desired state and realized state: " + str(DeepDiff(fullbogon_list_validated, implemented_ip_list, ignore_order=True)))
