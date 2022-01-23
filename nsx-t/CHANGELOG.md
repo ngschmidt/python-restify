@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [23 Jan 2022]
+
+### Added
+
+- NSX Policy Object manipulation
+  - There's an API oddity here. `expressions` wants a `dict` in `list`
+- Infrastructure domains
+
 ## [31-Dec-2021]
 
 ### Added

@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [23-Jan-2022] v0.2.5
+
+### Changed
+
+- `namshubs` won't crash if they receive bad responses from the endpoint.
+  - They'll report on them instead
+- `print()`/`exit()` statements collapsed.
+- Expanded error debugging
+
 ## [31-Dec-2021] v0.2.4
 
 ### Changed

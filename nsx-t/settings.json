@@ -136,6 +136,42 @@
 				"id": false
 			}
 		},
+		"get_domains": {
+			"uri": "/policy/api/v1/infra/domains",
+			"description": "NSX Infrastructure domains",
+			"method": "GET",
+			"requiresvariables": false
+		},
+		"get_policy_inventory_groups": {
+			"uri": "/policy/api/v1/infra/domains/{{ domain }}/groups",
+			"description": "Fetch NS-Groups",
+			"method": "GET",
+			"requiresvariables": true,
+			"variables": {
+				"domain": false
+			}
+		},
+		"get_policy_inventory_group": {
+			"uri": "/policy/api/v1/infra/domains/{{ domain }}/groups/{{ id }}",
+			"description": "Fetch NS-Group",
+			"method": "GET",
+			"requiresvariables": true,
+			"variables": {
+				"domain": false,
+				"id": false
+			}
+		},
+		"patch_policy_inventory_group": {
+			"uri": "/policy/api/v1/infra/domains/{{ domain }}/groups/{{ id }}",
+			"description": "Patch NS-Group",
+			"method": "PATCH",
+			"requiresvariables": true,
+			"requiresbody": true,
+			"variables": {
+				"domain": false,
+				"id": false
+			}
+		},
 		"get_event_defs": {
 			"uri": "/api/v1/events",
 			"description": "Fetch system alarm definitions",
