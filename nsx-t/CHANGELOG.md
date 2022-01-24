@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - NSX Policy Object manipulation
   - There's an API oddity here. `expressions` wants a `dict` in `list`
 - Infrastructure domains
+- Microsoft 365 gatherer
 
 ## [31-Dec-2021]
 
