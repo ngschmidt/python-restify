@@ -40,14 +40,9 @@ def validate_ip_network(input_to_validate):
 def assemble_nsgroup(input_obj_list):
     patch_dict = {
         "expression": [
-            {
-                "ip_addresses": input_obj_list,
-                "resource_type": "IPAddressExpression"
-            }
+            {"ip_addresses": input_obj_list, "resource_type": "IPAddressExpression"}
         ],
-        "group_type": [
-            "IPAddress"
-        ]
+        "group_type": ["IPAddress"],
     }
     print("Generated the following `dict`: ")
     print(json.dumps(patch_dict, indent=2))
@@ -98,10 +93,15 @@ cogitation_interface.namshub(
 )
 
 # Validate the PATCH
-implemented_object = json.loads(cogitation_interface.namshub(
-    "get_policy_inventory_group",
-    namshub_variables={"domain": "default", "id": nsgroup_name},
-))
+implemented_object = json.loads(
+    cogitation_interface.namshub(
+        "get_policy_inventory_group",
+        namshub_variables={"domain": "default", "id": nsgroup_name},
+    )
+)
 implemented_ip_list = implemented_object["expression"][0]["ip_addresses"]
 
-print("Difference between desired state and realized state: " + str(DeepDiff(fullbogon_list_validated, implemented_ip_list, ignore_order=True)))
+print(
+    "Difference between desired state and realized state: "
+    + str(DeepDiff(fullbogon_list_validated, implemented_ip_list, ignore_order=True))
+)
