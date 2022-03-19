@@ -28,7 +28,7 @@
 			"uri": "/api/v1/trust-management/certificates/{{ id }}",
 			"description": "Read Certificate (requires ID variable)",
 			"method": "GET",
-			"requiresvariables": false,
+			"requiresvariables": true,
 			"variables": { 
 				"id": false
 			}
