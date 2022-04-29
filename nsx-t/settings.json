@@ -136,6 +136,21 @@
 				"id": false
 			}
 		},
+		"get_segment": {
+			"uri": "/policy/api/v1/infra/segments/{{ id }}",
+			"description": "Get NSX-T Segment",
+			"method": "GET",
+			"requiresvariables": true,
+			"variables": {
+				"id": false
+			}
+		},
+		"get_segments": {
+			"uri": "/policy/api/v1/infra/segments",
+			"description": "Get NSX-T Segments",
+			"method": "GET",
+			"requiresvariables": false
+		},
 		"get_domains": {
 			"uri": "/policy/api/v1/infra/domains",
 			"description": "NSX Infrastructure domains",
