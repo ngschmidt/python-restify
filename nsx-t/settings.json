@@ -306,6 +306,34 @@
 				"id": ""
 			}
 		},
+		"get_enforcement_points": {
+			"uri": "/policy/api/v1/infra/sites/{{ site }}/enforcement-points",
+			"description": "Fetch NSX API Enforcement Points",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"site": false
+			}
+		},
+		"get_sites": {
+			"uri": "/api/v1/sites",
+			"description": "Fetch NSX API Sites",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false
+		},
+		"get_transport_nodes": {
+			"uri": "/policy/api/v1/infra/sites/{{ site }}/enforcement-points/{{ enforcement }}/host-transport-nodes",
+			"description": "Get NSX Host Transport Nodes",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"site": false,
+				"enforcement": false
+			}
+		},
 		"get_nsxalb_tls_profiles": {
 			"uri": "/policy/api/v1/infra/alb-ssl-profiles",
 			"description": "Fetch NSX ALB Managed TLS Profiles",
