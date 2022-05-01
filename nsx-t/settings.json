@@ -323,7 +323,7 @@
 			"requiresbody": false,
 			"requiresvariables": false
 		},
-		"get_transport_nodes": {
+		"get_host_transport_nodes": {
 			"uri": "/policy/api/v1/infra/sites/{{ site }}/enforcement-points/{{ enforcement }}/host-transport-nodes",
 			"description": "Get NSX Host Transport Nodes",
 			"method": "GET",
@@ -332,6 +332,40 @@
 			"variables": {
 				"site": false,
 				"enforcement": false
+			}
+		},
+		"get_fabric_nodes": {
+			"uri": "/api/v1/fabric/nodes",
+			"description": "Fetch NSX Fabric Nodes",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false
+		},
+		"get_edge_transport_nodes": {
+			"uri": "/api/v1/transport-nodes",
+			"description": "Fetch NSX Edge Transport Nodes",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false
+		},
+		"get_edge_transport_node": {
+			"uri": "/api/v1/transport-nodes/{{ id }}",
+			"description": "Get NSX Edge Transport Nodes",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": true
+			}
+		},
+		"delete_edge_transport_nodes": {
+			"uri": "/api/v1/transport-nodes/{{ id }}",
+			"description": "Delete NSX Edge Transport Nodes",
+			"method": "DELETE",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": true
 			}
 		},
 		"get_nsxalb_tls_profiles": {
