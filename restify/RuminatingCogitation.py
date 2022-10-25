@@ -331,12 +331,27 @@ class Reliquary:
                     return self.json_prettyprint(do_api_r.text)
                 else:
                     return do_api_r.text  # if HTTP status is good, save response
+            # If it doesn't have a payload, type will be boolean
+            elif not do_api_dryrun and type(do_api_payload) is bool:
+                do_api_r = requests.request(
+                    do_api_verb,
+                    url=do_api_url,
+                    headers=self.cogitation_headers,
+                    verify=self.cogitation_certvalidation,
+                    auth=(self.cogitation_username, self.cogitation_password),
+                )
+                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
+                response_code = do_api_r.status_code
+                do_api_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
+                if do_api_json_pretty:
+                    return self.json_prettyprint(do_api_r.text)
+                else:
+                    return do_api_r.text  # if HTTP status is good, save response
             else:
                 do_api_dryrun_report = {
                     "do_api_get_headers": self.cogitation_headers,
                     "do_api_url": do_api_url,
                     "do_api_verb": do_api_verb,
-                    "do_api_payload": json.loads(do_api_payload),
                 }
                 print(self.json_prettyprint(do_api_dryrun_report))
         except requests.Timeout:
