@@ -85,7 +85,7 @@
 		},
 		"update_app_profile": {
 			"uri": "/api/applicationprofile/{{ id }}",
-			"description": "Create Managed Application Profile",
+			"description": "Update Managed Application Profile",
 			"method": "PUT",
 			"requiresbody": true,
 			"requiresvariables": true
@@ -115,6 +115,20 @@
 			"variables": {
 				"id": false
 			}
+		},
+		"create_virtual_service": {
+			"uri": "/api/virtualservice",
+			"description": "Create Virtual Service",
+			"method": "POST",
+			"requiresbody": true,
+			"requiresvariables": false
+		},
+		"update_virtual_service": {
+			"uri": "/api/virtualservice/{{ id }}",
+			"description": "Update Virtual Service",
+			"method": "PUT",
+			"requiresbody": true,
+			"requiresvariables": true
 		}
 	},
 	"errors": {
