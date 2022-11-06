@@ -100,6 +100,21 @@
 			"description": "Create Load Balancer Pool",
 			"method": "POST",
 			"requiresbody": true
+		},
+		"get_virtual_services": {
+			"uri": "/api/virtualservice",
+			"description": "Get Virtual Services",
+			"method": "GET"
+		},
+		"get_virtual_service": {
+			"uri": "/api/virtualservice/{{ id }}",
+			"description": "Fetch Virtual Service",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": false
+			}
 		}
 	},
 	"errors": {
