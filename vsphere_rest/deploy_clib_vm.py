@@ -7,7 +7,6 @@
 # System Calls
 import os
 import sys
-import requests
 
 # Arguments Parsing
 import argparse
