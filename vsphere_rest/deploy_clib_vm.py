@@ -35,10 +35,9 @@ cogitation_interface = Reliquary(
 cogitation_interface.add_http_header(
     "vmware-api-session-id", cogitation_interface.namshub("post_api_key").strip("\"")
 )
-print(json.dumps(cogitation_interface.cogitation_headers))
-
-# Next, let's fetch an API key
 
 # Then, let's fetch the vSphere details
+
+print(json.dumps(json.loads(cogitation_interface.namshub("get_clibs")), indent=4))
 
 # Let's check for a configuration. If none exists, dump the vSphere details to help the process along
