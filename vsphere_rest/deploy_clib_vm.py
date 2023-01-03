@@ -55,13 +55,14 @@ else:
         input_endpoint=os.getenv("API_ENDPOINT"),
     )
 
-# Define the JSON Payload as a schema:
-"""
+# Define the JSON Payload as a schema. It'll be overwritten if a file is provided later
 json_payload = {
-
+    "id": False,
+    "name": False,
+    "datastore": False,
+    "folder": False,
+    "cluster": False,
 }
-"""
-json_payload = {}
 
 if args.p:
     # Load Settings from JSON
