@@ -73,7 +73,7 @@ if args.p:
 
 # Get the API key and add it to the API interface object
 cogitation_interface.add_http_header(
-    "vmware-api-session-id", cogitation_interface.namshub("post_api_key").strip("\"")
+    "vmware-api-session-id", cogitation_interface.namshub("post_api_key").strip('"')
 )
 
 # Format the work dictionary. This will also function as the JSON schema
@@ -84,7 +84,7 @@ work_dict = {
         "content_libraries_contents": {},
         "content_library_selected": False,
         "content_library_items": [],
-        "content_library_item_selected": False
+        "content_library_item_selected": False,
     },
     "vsphere": {
         "vcenter_library_selected": False,
@@ -93,11 +93,9 @@ work_dict = {
         "vcenter_datastores": [],
         "vcenter_datastore_selected": False,
         "vcenter_clusters": [],
-        "vcenter_cluster_selected": False
+        "vcenter_cluster_selected": False,
     },
-    "deployed": {
-        "vm_id": False
-    }
+    "deployed": {"vm_id": False},
 }
 
 # Then, let's fetch the vSphere details
@@ -105,24 +103,50 @@ work_dict = {
 print("Fetching vSphere Details...")
 
 # Fetch Content Library IDs
-work_dict["content_libraries"]["content_libraries"] = json.loads(cogitation_interface.namshub("get_clibs"))
+work_dict["content_libraries"]["content_libraries"] = json.loads(
+    cogitation_interface.namshub("get_clibs")
+)
 for i in work_dict["content_libraries"]["content_libraries"]:
-    work_dict["content_libraries"]["content_libraries_contents"][i] = json.loads(cogitation_interface.namshub("get_clib_library_items", namshub_variables={"id": i}))
+    work_dict["content_libraries"]["content_libraries_contents"][i] = json.loads(
+        cogitation_interface.namshub(
+            "get_clib_library_items", namshub_variables={"id": i}
+        )
+    )
     # Create a temporary variable, because the overwriting-in-place will end the loop after the first iteration
-    nested_loop_list = work_dict["content_libraries"]["content_libraries_contents"][i].copy()
+    nested_loop_list = work_dict["content_libraries"]["content_libraries_contents"][
+        i
+    ].copy()
     work_dict["content_libraries"]["content_libraries_contents"][i] = {}
     # Check on each template ID
     for ii in nested_loop_list:
         # Grab info on the content library object
-        work_dict["content_libraries"]["content_libraries_contents"][i][ii] = json.loads(cogitation_interface.namshub("get_clib_library_item", namshub_variables={"id": ii}))
+        work_dict["content_libraries"]["content_libraries_contents"][i][
+            ii
+        ] = json.loads(
+            cogitation_interface.namshub(
+                "get_clib_library_item", namshub_variables={"id": ii}
+            )
+        )
         # Then, check and see if it's in vCenter
-        work_dict["content_libraries"]["content_libraries_contents"][i][ii]["vcenter_obj"] = json.loads(cogitation_interface.namshub("get_vcenter_library_item", namshub_variables={"id": ii}))
+        work_dict["content_libraries"]["content_libraries_contents"][i][ii][
+            "vcenter_obj"
+        ] = json.loads(
+            cogitation_interface.namshub(
+                "get_vcenter_library_item", namshub_variables={"id": ii}
+            )
+        )
 # Fetch vCenter Folders
-work_dict["vsphere"]["vcenter_folders"] = json.loads(cogitation_interface.namshub("get_vcenter_folders"))
+work_dict["vsphere"]["vcenter_folders"] = json.loads(
+    cogitation_interface.namshub("get_vcenter_folders")
+)
 # Fetch vCenter Datastores
-work_dict["vsphere"]["vcenter_datastores"] = json.loads(cogitation_interface.namshub("get_vcenter_datastores"))
+work_dict["vsphere"]["vcenter_datastores"] = json.loads(
+    cogitation_interface.namshub("get_vcenter_datastores")
+)
 # Fetch vCenter Clusters
-work_dict["vsphere"]["vcenter_clusters"] = json.loads(cogitation_interface.namshub("get_vcenter_clusters"))
+work_dict["vsphere"]["vcenter_clusters"] = json.loads(
+    cogitation_interface.namshub("get_vcenter_clusters")
+)
 
 
 # Let's check for a configuration. If none exists, dump the vSphere details to help the process along
