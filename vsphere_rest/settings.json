@@ -1,0 +1,278 @@
+{
+	"settings": {
+		"authentication": {
+			"method": "basic",
+			"certificate": "",
+			"key": ""
+		},
+		"tls": {
+			"validation": false
+		},
+		"verbosity": 1,
+		"headers": {
+			"content-type": "application/json",
+			"X-Allow-Overwrite": "true"
+		},
+		"endpoint": "https://vcenter.lab.engyak.net"
+	},
+	"plays": {
+		"post_api_key": {
+			"uri": "/api/session",
+			"description": "Create an API Key",
+			"method": "POST",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}
+		},
+		"get_clibs": {
+			"uri": "/api/content/library",
+			"description": "Fetch a list of available content libraries",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}
+		},
+		"get_clib": {
+			"uri": "/api/content/library/{{ id }}",
+			"description": "Fetch an available content libraries",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": false
+			}
+		},
+		"get_clib_library_items": {
+			"uri": "/api/content/library/item?library_id={{ id }}",
+			"description": "Fetch an available content library's items",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": false
+			}
+		},
+		"get_clib_library_item": {
+			"uri": "/api/content/library/item?library_id={{ id }}",
+			"description": "Fetch an available content library's item",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": false
+			}
+		},
+		"get_vcenter_library_items": {
+			"uri": "/api/vcenter/vm-template/library-items/{{ id }}",
+			"description": "Fetch a vCenter's template items",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": false
+			}
+		},
+		"get_vcenter_clusters": {
+			"uri": "/api/vcenter/clusters",
+			"description": "Fetch vSphere Cluster IDs",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}
+		},
+		"get_vcenter_folders": {
+			"uri": "/api/vcenter/folder",
+			"description": "Fetch vSphere Folders",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}
+		},
+		"get_vcenter_datastores": {
+			"uri": "/api/vcenter/datastore",
+			"description": "Fetch vSphere Datastores",
+			"method": "GET",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}
+		},
+		"post_deploy_vm": {
+			"uri": "/api/vcenter/vm-template/library-items/{{ id }}?action=deploy",
+			"description": "Deploy a VM from a Content Library",
+			"method": "POST",
+			"requiresbody": true,
+			"requiresvariables": true,
+			"variables": {
+				"id": false,
+				"hostname": false,
+				"folder": false,
+				"cluster": false,
+				"datastore": false
+			},
+			"payload": {
+				"name": "{{ hostname }}",
+				"disk_storage": {
+					"datastore": "{{ datastore }}"
+				},
+				"placement": {
+					"folder": "{{ folder }}",
+					"cluster": "{{ cluster }}"
+				}
+			}
+		}
+	},
+	"errors": {
+		"200": [
+			"OK",
+			"Request fulfilled, document follows"
+		],
+		"201": [
+			"Created",
+			"Document created, URL follows"
+		],
+		"202": [
+			"Accepted",
+			"Request accepted, processing continues off-line"
+		],
+		"203": [
+			"Non-Authoritative Information",
+			"Request fulfilled from cache"
+		],
+		"204": [
+			"No Content",
+			"Request fulfilled, nothing follows"
+		],
+		"205": [
+			"Reset Content",
+			"Clear input form for further input."
+		],
+		"206": [
+			"Partial Content",
+			"Partial content follows."
+		],
+		"300": [
+			"Multiple Choices",
+			"Object has several resources -- see URI list"
+		],
+		"301": [
+			"Moved Permanently",
+			"Object moved permanently -- see URI list"
+		],
+		"302": [
+			"Found",
+			"Object moved temporarily -- see URI list"
+		],
+		"303": [
+			"See Other",
+			"Object moved -- see Method and URL list"
+		],
+		"304": [
+			"Not Modified",
+			"Document has not changed since given time"
+		],
+		"305": [
+			"Use Proxy",
+			"You must use proxy specified in Location to access this resource."
+		],
+		"307": [
+			"Temporary Redirect",
+			"Object moved temporarily -- see URI list"
+		],
+		"400": [
+			"Bad Request",
+			"Bad request syntax or unsupported method"
+		],
+		"401": [
+			"Unauthorized",
+			"No permission -- see authorization schemes"
+		],
+		"402": [
+			"Payment Required",
+			"No payment -- see charging schemes"
+		],
+		"403": [
+			"Forbidden",
+			"Request forbidden -- authorization will not help"
+		],
+		"404": [
+			"Not Found",
+			"Nothing matches the given URI"
+		],
+		"405": [
+			"Method Not Allowed",
+			"Specified method is invalid for this server."
+		],
+		"406": [
+			"Not Acceptable",
+			"URI not available in preferred format."
+		],
+		"407": [
+			"Proxy Authentication Required",
+			"You must authenticate with this proxy before proceeding."
+		],
+		"408": [
+			"Request Timeout",
+			"Request timed out; try again later."
+		],
+		"409": [
+			"Conflict",
+			"Request conflict."
+		],
+		"410": [
+			"Gone",
+			"URI no longer exists and has been permanently removed."
+		],
+		"411": [
+			"Length Required",
+			"Client must specify Content-Length."
+		],
+		"412": [
+			"Precondition Failed",
+			"Precondition in headers is false."
+		],
+		"413": [
+			"Request Entity Too Large",
+			"Entity is too large."
+		],
+		"414": [
+			"Request-URI Too Long",
+			"URI is too long."
+		],
+		"415": [
+			"Unsupported Media Type",
+			"Entity body in unsupported format."
+		],
+		"416": [
+			"Requested Range Not Satisfiable",
+			"Cannot satisfy request range."
+		],
+		"417": [
+			"Expectation Failed",
+			"Expect condition could not be satisfied."
+		],
+		"500": [
+			"Internal Server Error",
+			"Server got itself in trouble"
+		],
+		"501": [
+			"Not Implemented",
+			"Server does not support this operation"
+		],
+		"502": [
+			"Bad Gateway",
+			"Invalid responses from another server/proxy."
+		],
+		"503": [
+			"Service Unavailable",
+			"The server cannot process the request due to a high load"
+		],
+		"504": [
+			"Gateway Timeout",
+			"The gateway server did not receive a timely response"
+		],
+		"505": [
+			"HTTP Version Not Supported",
+			"Cannot fulfill request."
+		]
+	}
+}
