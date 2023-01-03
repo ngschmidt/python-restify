@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [02-Jan-2023] v0.2.7
+
+### Changed
+
+- Code readability on `namshub`
+
+### Added
+
+- Method to set an API key (via `add_http_header`)
+- Method to invoke APIs without a username/password
+
 ## [23-Jan-2022] v0.2.5
 
 ### Changed
