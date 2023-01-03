@@ -7,6 +7,7 @@
 # System Calls
 import os
 import sys
+import requests
 
 # Arguments Parsing
 import argparse
@@ -71,6 +72,9 @@ if args.p:
             json_payload = json.load(json_filehandle)
     except Exception as e:
         exit("Error Loading Payload File " + args.p + ": " + str(e))
+    for i in ["id", "name", "datastore", "folder", "cluster"]:
+        if json_payload[i] is False:
+            exit("Missing Key in payload: " + i)
 
 # Get the API key and add it to the API interface object
 cogitation_interface.add_http_header(

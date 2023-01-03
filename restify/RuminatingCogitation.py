@@ -140,6 +140,9 @@ class Reliquary:
             self.cogitation_certvalidation = json_settings["settings"]["tls"][
                 "validation"
             ]
+            # Reduce spam by disabling the certificate validation nag spam
+            if self.cogitation_certvalidation is False:
+                requests.packages.urllib3.disable_warnings()
             # Authentication Settings
             self.cogitation_username = input_user
             self.cogitation_password = input_pass
