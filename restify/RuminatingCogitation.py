@@ -140,6 +140,9 @@ class Reliquary:
             self.cogitation_certvalidation = json_settings["settings"]["tls"][
                 "validation"
             ]
+            # Reduce spam by disabling the certificate validation nag spam
+            if self.cogitation_certvalidation is False:
+                requests.packages.urllib3.disable_warnings()
             # Authentication Settings
             self.cogitation_username = input_user
             self.cogitation_password = input_pass
@@ -164,7 +167,10 @@ class Reliquary:
     # Add an HTTP header
     def add_http_header(self, add_http_header_name, add_http_header_value):
         # Check to ensure they're strings
-        if type(add_http_header_name) is not str or type(add_http_header_value) is not str:
+        if (
+            type(add_http_header_name) is not str
+            or type(add_http_header_value) is not str
+        ):
             sys.exit("E0003: Invalid HTTP Header type!")
         try:
             self.cogitation_headers[add_http_header_name] = add_http_header_value
@@ -403,7 +409,7 @@ class Reliquary:
         do_api_verb="GET",
         do_api_payload=False,
         do_api_dryrun=False,
-        do_api_json_pretty=False
+        do_api_json_pretty=False,
     ):
         # Perform API Processing - conditional basic authentication
         try:

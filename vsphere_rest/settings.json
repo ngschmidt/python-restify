@@ -53,7 +53,7 @@
 			}
 		},
 		"get_clib_library_item": {
-			"uri": "/api/content/library/item?library_id={{ id }}",
+			"uri": "/api/content/library/item/{{ id }}",
 			"description": "Fetch an available content library's item",
 			"method": "KEY_GET",
 			"requiresbody": false,
@@ -62,7 +62,7 @@
 				"id": false
 			}
 		},
-		"get_vcenter_library_items": {
+		"get_vcenter_library_item": {
 			"uri": "/api/vcenter/vm-template/library-items/{{ id }}",
 			"description": "Fetch a vCenter's template items",
 			"method": "KEY_GET",
@@ -73,7 +73,7 @@
 			}
 		},
 		"get_vcenter_clusters": {
-			"uri": "/api/vcenter/clusters",
+			"uri": "/api/vcenter/cluster",
 			"description": "Fetch vSphere Cluster IDs",
 			"method": "KEY_GET",
 			"requiresbody": false,
