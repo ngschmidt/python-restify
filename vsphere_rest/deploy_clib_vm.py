@@ -36,8 +36,32 @@ cogitation_interface.add_http_header(
     "vmware-api-session-id", cogitation_interface.namshub("post_api_key").strip("\"")
 )
 
+# Format the work dictionary
+
+work_dict = {
+    "content_libraries": {
+        "content_library_selected": False,
+        "content_library_items": [],
+        "content_library_item_selected": False
+    },
+    "vsphere": {
+        "vcenter_library_items": [],
+        "vcenter_library_item_selected": False,
+        "vcenter_folder": False,
+        "vcenter_datastore": False,
+        "vcenter_clusters": [],
+        "vcenter_cluster_item_selected": False
+    },
+    "deployed": {
+        "vm_id": False
+    }
+}
 # Then, let's fetch the vSphere details
 
 print(json.dumps(json.loads(cogitation_interface.namshub("get_clibs")), indent=4))
 
 # Let's check for a configuration. If none exists, dump the vSphere details to help the process along
+
+# Dump the work
+
+print(json.dumps(work_dict), indent=4)
