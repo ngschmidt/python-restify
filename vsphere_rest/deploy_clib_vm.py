@@ -25,9 +25,13 @@ for env_mandatory in ["API_ENDPOINT", "API_USER", "API_PASS"]:
 
 # Use `Reliquary` to create API object
 cogitation_interface = Reliquary(
-    "settings.json", input_user=os.getenv("API_USER"), input_pass=os.getenv("API_PASS", input_endpoint=os.getenv("API_ENDPOINT"))
+    "settings.json",
+    input_user=os.getenv("API_USER"),
+    input_pass=os.getenv("API_PASS", input_endpoint=os.getenv("API_ENDPOINT")),
 )
-cogitation_interface.add_http_header("vmware-api-session-id", cogitation_interface.namshub("post_api_key"))
+cogitation_interface.add_http_header(
+    "vmware-api-session-id", cogitation_interface.namshub("post_api_key")
+)
 print(json.dumps(cogitation_interface.cogitation_headers))
 
 # Next, let's fetch an API key
