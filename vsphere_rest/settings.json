@@ -27,7 +27,7 @@
 		"get_clibs": {
 			"uri": "/api/content/library",
 			"description": "Fetch a list of available content libraries",
-			"method": "GET",
+			"method": "KEY_GET",
 			"requiresbody": false,
 			"requiresvariables": false,
 			"variables": {}
@@ -35,7 +35,7 @@
 		"get_clib": {
 			"uri": "/api/content/library/{{ id }}",
 			"description": "Fetch an available content libraries",
-			"method": "GET",
+			"method": "KEY_GET",
 			"requiresbody": false,
 			"requiresvariables": true,
 			"variables": {
@@ -45,7 +45,7 @@
 		"get_clib_library_items": {
 			"uri": "/api/content/library/item?library_id={{ id }}",
 			"description": "Fetch an available content library's items",
-			"method": "GET",
+			"method": "KEY_GET",
 			"requiresbody": false,
 			"requiresvariables": true,
 			"variables": {
@@ -55,7 +55,7 @@
 		"get_clib_library_item": {
 			"uri": "/api/content/library/item?library_id={{ id }}",
 			"description": "Fetch an available content library's item",
-			"method": "GET",
+			"method": "KEY_GET",
 			"requiresbody": false,
 			"requiresvariables": true,
 			"variables": {
@@ -65,7 +65,7 @@
 		"get_vcenter_library_items": {
 			"uri": "/api/vcenter/vm-template/library-items/{{ id }}",
 			"description": "Fetch a vCenter's template items",
-			"method": "GET",
+			"method": "KEY_GET",
 			"requiresbody": false,
 			"requiresvariables": true,
 			"variables": {
@@ -75,7 +75,7 @@
 		"get_vcenter_clusters": {
 			"uri": "/api/vcenter/clusters",
 			"description": "Fetch vSphere Cluster IDs",
-			"method": "GET",
+			"method": "KEY_GET",
 			"requiresbody": false,
 			"requiresvariables": false,
 			"variables": {}
@@ -83,7 +83,7 @@
 		"get_vcenter_folders": {
 			"uri": "/api/vcenter/folder",
 			"description": "Fetch vSphere Folders",
-			"method": "GET",
+			"method": "KEY_GET",
 			"requiresbody": false,
 			"requiresvariables": false,
 			"variables": {}
@@ -91,7 +91,7 @@
 		"get_vcenter_datastores": {
 			"uri": "/api/vcenter/datastore",
 			"description": "Fetch vSphere Datastores",
-			"method": "GET",
+			"method": "KEY_GET",
 			"requiresbody": false,
 			"requiresvariables": false,
 			"variables": {}
@@ -99,7 +99,7 @@
 		"post_deploy_vm": {
 			"uri": "/api/vcenter/vm-template/library-items/{{ id }}?action=deploy",
 			"description": "Deploy a VM from a Content Library",
-			"method": "POST",
+			"method": "KEY_POST",
 			"requiresbody": true,
 			"requiresvariables": true,
 			"variables": {
