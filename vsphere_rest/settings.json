@@ -11,124 +11,114 @@
 		"verbosity": 1,
 		"headers": {
 			"content-type": "application/json",
-			"Accept-Encoding": "application/json",
-			"X-Allow-Overwrite": "true",
-			"X-Avi-Version": "21.1.3"
+			"X-Allow-Overwrite": "true"
 		},
-		"endpoint": "https://avi.lab.engyak.net"
+		"endpoint": "https://vcenter.lab.engyak.net"
 	},
 	"plays": {
-		"get_version": {
-			"uri": "/api/cluster/version",
-			"description": "Fetch Avi Version",
-			"method": "GET",
+		"post_api_key": {
+			"uri": "/api/session",
+			"description": "Create an API Key",
+			"method": "POST",
 			"requiresbody": false,
 			"requiresvariables": false,
 			"variables": {}
 		},
-		"get_tls_profiles": {
-			"uri": "/api/sslprofile",
-			"description": "Fetch Managed TLS Profiles",
-			"method": "GET",
+		"get_clibs": {
+			"uri": "/api/content/library",
+			"description": "Fetch a list of available content libraries",
+			"method": "KEY_GET",
 			"requiresbody": false,
 			"requiresvariables": false,
 			"variables": {}
 		},
-		"get_tls_profile": {
-			"uri": "/api/sslprofile/{{ id }}",
-			"description": "Fetch Managed TLS Profile",
-			"method": "GET",
+		"get_clib": {
+			"uri": "/api/content/library/{{ id }}",
+			"description": "Fetch an available content libraries",
+			"method": "KEY_GET",
 			"requiresbody": false,
 			"requiresvariables": true,
 			"variables": {
 				"id": false
 			}
 		},
-		"create_tls_profile": {
-			"uri": "/api/sslprofile",
-			"description": "Create Managed SSL Profile",
-			"method": "POST",
-			"requiresbody": true,
-			"requiresvariables": false
+		"get_clib_library_items": {
+			"uri": "/api/content/library/item?library_id={{ id }}",
+			"description": "Fetch an available content library's items",
+			"method": "KEY_GET",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": false
+			}
 		},
-		"update_tls_profile": {
-			"uri": "/api/sslprofile/{{ id }}",
-			"description": "Create Managed SSL Profile",
-			"method": "PUT",
-			"requiresbody": true,
-			"requiresvariables": false
+		"get_clib_library_item": {
+			"uri": "/api/content/library/item?library_id={{ id }}",
+			"description": "Fetch an available content library's item",
+			"method": "KEY_GET",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": false
+			}
 		},
-		"get_app_profiles": {
-			"uri": "/api/applicationprofile",
-			"description": "Fetch Managed Application Profiles",
-			"method": "GET",
+		"get_vcenter_library_items": {
+			"uri": "/api/vcenter/vm-template/library-items/{{ id }}",
+			"description": "Fetch a vCenter's template items",
+			"method": "KEY_GET",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": false
+			}
+		},
+		"get_vcenter_clusters": {
+			"uri": "/api/vcenter/clusters",
+			"description": "Fetch vSphere Cluster IDs",
+			"method": "KEY_GET",
 			"requiresbody": false,
 			"requiresvariables": false,
 			"variables": {}
 		},
-		"get_app_profile": {
-			"uri": "/api/applicationprofile/{{ id }}",
-			"description": "Fetch Managed Application Profile",
-			"method": "GET",
+		"get_vcenter_folders": {
+			"uri": "/api/vcenter/folder",
+			"description": "Fetch vSphere Folders",
+			"method": "KEY_GET",
 			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}
+		},
+		"get_vcenter_datastores": {
+			"uri": "/api/vcenter/datastore",
+			"description": "Fetch vSphere Datastores",
+			"method": "KEY_GET",
+			"requiresbody": false,
+			"requiresvariables": false,
+			"variables": {}
+		},
+		"post_deploy_vm": {
+			"uri": "/api/vcenter/vm-template/library-items/{{ id }}?action=deploy",
+			"description": "Deploy a VM from a Content Library",
+			"method": "KEY_POST",
+			"requiresbody": true,
 			"requiresvariables": true,
 			"variables": {
-				"id": false
+				"id": false,
+				"hostname": false,
+				"folder": false,
+				"cluster": false,
+				"datastore": false
+			},
+			"payload": {
+				"name": "{{ hostname }}",
+				"disk_storage": {
+					"datastore": "{{ datastore }}"
+				},
+				"placement": {
+					"folder": "{{ folder }}",
+					"cluster": "{{ cluster }}"
+				}
 			}
-		},
-		"create_app_profile": {
-			"uri": "/api/applicationprofile",
-			"description": "Create Managed Application Profile",
-			"method": "POST",
-			"requiresbody": true,
-			"requiresvariables": false
-		},
-		"update_app_profile": {
-			"uri": "/api/applicationprofile/{{ id }}",
-			"description": "Update Managed Application Profile",
-			"method": "PUT",
-			"requiresbody": true,
-			"requiresvariables": true
-		},
-		"get_pools": {
-			"uri": "/api/pool",
-			"description": "Get Load Balancer Pool",
-			"method": "GET"
-		},
-		"create_pool": {
-			"uri": "/api/pool",
-			"description": "Create Load Balancer Pool",
-			"method": "POST",
-			"requiresbody": true
-		},
-		"get_virtual_services": {
-			"uri": "/api/virtualservice",
-			"description": "Get Virtual Services",
-			"method": "GET"
-		},
-		"get_virtual_service": {
-			"uri": "/api/virtualservice/{{ id }}",
-			"description": "Fetch Virtual Service",
-			"method": "GET",
-			"requiresbody": false,
-			"requiresvariables": true,
-			"variables": {
-				"id": false
-			}
-		},
-		"create_virtual_service": {
-			"uri": "/api/virtualservice",
-			"description": "Create Virtual Service",
-			"method": "POST",
-			"requiresbody": true,
-			"requiresvariables": false
-		},
-		"update_virtual_service": {
-			"uri": "/api/virtualservice/{{ id }}",
-			"description": "Update Virtual Service",
-			"method": "PUT",
-			"requiresbody": true,
-			"requiresvariables": true
 		}
 	},
 	"errors": {

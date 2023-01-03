@@ -161,6 +161,16 @@ class Reliquary:
 
     # Functions
 
+    # Add an HTTP header
+    def add_http_header(self, add_http_header_name, add_http_header_value):
+        # Check to ensure they're strings
+        if type(add_http_header_name) is not str or type(add_http_header_value) is not str:
+            sys.exit("E0003: Invalid HTTP Header type!")
+        try:
+            self.cogitation_headers[add_http_header_name] = add_http_header_value
+        except Exception as e:
+            exit("E0003: Unhandled exception adding HTTP header" + str(e))
+
     # Do API DELETE, using basic credentials
     def do_api_delete(self, do_api_uri, do_api_dryrun=False, do_api_json_pretty=False):
         # Perform API Processing - conditional basic authentication
@@ -386,6 +396,103 @@ class Reliquary:
             )
             print(str(e))
 
+    # Do API POST, using no credentials or headers
+    def do_api(
+        self,
+        do_api_uri,
+        do_api_verb="GET",
+        do_api_payload=False,
+        do_api_dryrun=False,
+        do_api_json_pretty=False
+    ):
+        # Perform API Processing - conditional basic authentication
+        try:
+            do_api_url = self.cogitation_endpoint + do_api_uri
+            self.validate_url(do_api_url)
+            if not do_api_dryrun and type(do_api_payload) is dict:
+                do_api_r = requests.request(
+                    do_api_verb,
+                    url=do_api_url,
+                    headers=self.cogitation_headers,
+                    verify=self.cogitation_certvalidation,
+                    json=do_api_payload,
+                )
+                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
+                response_code = do_api_r.status_code
+                do_api_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
+                if do_api_json_pretty:
+                    return self.json_prettyprint(do_api_r.text)
+                else:
+                    return do_api_r.text  # if HTTP status is good, save response
+            elif not do_api_dryrun and type(do_api_payload) is str:
+                do_api_r = requests.request(
+                    do_api_verb,
+                    url=do_api_url,
+                    headers=self.cogitation_headers,
+                    verify=self.cogitation_certvalidation,
+                    data=do_api_payload,
+                )
+                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
+                response_code = do_api_r.status_code
+                do_api_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
+                if do_api_json_pretty:
+                    return self.json_prettyprint(do_api_r.text)
+                else:
+                    return do_api_r.text  # if HTTP status is good, save response
+            # If it doesn't have a payload, type will be boolean
+            elif not do_api_dryrun and type(do_api_payload) is bool:
+                do_api_r = requests.request(
+                    do_api_verb,
+                    url=do_api_url,
+                    headers=self.cogitation_headers,
+                    verify=self.cogitation_certvalidation,
+                )
+                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
+                response_code = do_api_r.status_code
+                do_api_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
+                if do_api_json_pretty:
+                    return self.json_prettyprint(do_api_r.text)
+                else:
+                    return do_api_r.text  # if HTTP status is good, save response
+            else:
+                do_api_dryrun_report = {
+                    "do_api_get_headers": self.cogitation_headers,
+                    "do_api_url": do_api_url,
+                    "do_api_verb": do_api_verb,
+                }
+                print(self.json_prettyprint(do_api_dryrun_report))
+        except requests.Timeout:
+            print("E1000: API Connection timeout!")
+        except requests.ConnectionError as connection_error:
+            print(connection_error)
+        except requests.HTTPError:
+            if self.get_http_error_code(response_code):
+                print(
+                    "EA"
+                    + str(response_code)
+                    + ": HTTP Status Error "
+                    + str(response_code)
+                    + " "
+                    + self.get_http_error_code(response_code)
+                    + ": "
+                    + do_api_url
+                )
+                return do_api_r.text
+            else:
+                print("EA999: Unhandled HTTP Error " + str(response_code) + "!")
+        except requests.RequestException as requests_exception:
+            print(requests_exception)
+        except Exception as e:
+            print(
+                "E1002: Unhandled Requests exception! "
+                + str(e)
+                + " with endpoint "
+                + do_api_url
+                + "and response "
+                + do_api_r.text
+            )
+            print(str(e))
+
     # Executor of the API calls.
     # Takes optional arguments (variables, payload) depending on which method is used
     def namshub(
@@ -449,11 +556,22 @@ class Reliquary:
                 do_api_dryrun=namshub_dryrun,
                 do_api_json_pretty=namshub_json_pretty,
             )
-        elif namshub_verb == "POST" or namshub_verb == "PATCH" or namshub_verb == "PUT":
+        elif namshub_verb in ["POST", "PATCH", "PUT"]:
             return self.do_api_pass(
                 namshub_resource,
                 do_api_payload=namshub_payload,
                 do_api_verb=namshub_verb,
+                do_api_dryrun=namshub_dryrun,
+                do_api_json_pretty=namshub_json_pretty,
+            )
+        elif namshub_verb in ["KEY_POST", "KEY_PATCH", "KEY_PUT", "KEY_GET"]:
+            # Stay friendly to older python, remove the prefix `KEY_`
+            api_verb = namshub_verb[4:]
+            # Then run the API call
+            return self.do_api(
+                namshub_resource,
+                do_api_payload=namshub_payload,
+                do_api_verb=api_verb,
                 do_api_dryrun=namshub_dryrun,
                 do_api_json_pretty=namshub_json_pretty,
             )
