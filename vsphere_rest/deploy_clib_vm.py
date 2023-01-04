@@ -35,6 +35,7 @@ play_help = (
 parser = argparse.ArgumentParser(description="Fetch via API")
 parser.add_argument("-f", help="REST Settings File (JSON)")
 parser.add_argument("-p", help="RESTful Payload")
+parser.add_argument("-v", action="store_true")
 args = parser.parse_args()
 
 # Initialize vSphere Connection
@@ -152,9 +153,48 @@ work_dict["vsphere"]["vcenter_clusters"] = json.loads(
     cogitation_interface.namshub("get_vcenter_clusters")
 )
 
+# If no entries were provided, generate suggestions
+if not args.p:
+    json_payload = {
+        "id": {"description": "The Content Library object to clone", "suggestions": {}},
+        "name": "Example",
+        "datastore": {
+            "description": "The Content Library object to clone",
+            "suggestions": {},
+        },
+        "folder": {
+            "description": "The Content Library object to clone",
+            "suggestions": {},
+        },
+        "cluster": {
+            "description": "The Content Library object to clone",
+            "suggestions": {},
+        },
+    }
+    # Loop through and validate templates before suggesting them
+    for i in work_dict["content_libraries"]["content_libraries_contents"]:
+        for ii in work_dict["content_libraries"]["content_libraries_contents"][i]:
+            if (
+                work_dict["content_libraries"]["content_libraries_contents"][i][ii][
+                    "vcenter_obj"
+                ].get("error_type", True)
+                != "INTERNAL_SERVER_ERROR"
+            ):
+                json_payload["id"]["suggestions"][ii] = {
+                    "name": work_dict["content_libraries"][
+                        "content_libraries_contents"
+                    ][i][ii]["name"],
+                    "guest_OS": work_dict["content_libraries"][
+                        "content_libraries_contents"
+                    ][i][ii].get("guest_OS", "UNKNOWN"),
+                }
 
 # Let's check for a configuration. If none exists, dump the vSphere details to help the process along
 
 # Dump the work
-
-print(json.dumps(work_dict, indent=4))
+if args.v:
+    print(json.dumps(work_dict, indent=4))
+    print("Work Dictionary")
+print("Suggestions:")
+print(json.dumps(json_payload, indent=4))
+print("Operation Complete!")
