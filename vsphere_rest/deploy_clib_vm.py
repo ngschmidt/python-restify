@@ -159,15 +159,15 @@ if not args.p:
         "id": {"description": "The Content Library object to clone", "suggestions": {}},
         "name": "Example",
         "datastore": {
-            "description": "The Content Library object to clone",
+            "description": "The vSphere datastore to put virtual disks on",
             "suggestions": {},
         },
         "folder": {
-            "description": "The Content Library object to clone",
+            "description": "The vCenter folder to place the VM into",
             "suggestions": {},
         },
         "cluster": {
-            "description": "The Content Library object to clone",
+            "description": "The vSphere compute cluster to put the VM into",
             "suggestions": {},
         },
     }
@@ -186,7 +186,7 @@ if not args.p:
                     ][i][ii]["name"],
                     "guest_OS": work_dict["content_libraries"][
                         "content_libraries_contents"
-                    ][i][ii].get("guest_OS", "UNKNOWN"),
+                    ][i][ii]["vcenter_obj"].get("guest_OS", "UNKNOWN"),
                 }
     # Looping datastore suggestions is easy for now. If we knew more data, this would be more refined
     for i in work_dict["vsphere"]["vcenter_datastores"]:
@@ -204,8 +204,7 @@ if not args.p:
     print(json.dumps(json_payload, indent=4))
     print("Operation Complete!")
 
-
-# Let's check for a configuration. If none exists, dump the vSphere details to help the process along
+# Let's start by validating inputs
 
 # Dump the work
 if args.v:
