@@ -190,7 +190,7 @@ class Reliquary:
                     verify=self.cogitation_certvalidation,
                     auth=(self.cogitation_username, self.cogitation_password),
                 )
-                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
+                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for error handling
                 response_code = do_api_delete_r.status_code
                 print(response_code)
                 do_api_delete_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
@@ -253,7 +253,7 @@ class Reliquary:
                     verify=self.cogitation_certvalidation,
                     auth=(self.cogitation_username, self.cogitation_password),
                 )
-                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
+                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for error handling
                 response_code = do_api_get_r.status_code
                 do_api_get_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
                 if do_api_json_pretty:
@@ -324,7 +324,7 @@ class Reliquary:
                     auth=(self.cogitation_username, self.cogitation_password),
                     json=do_api_payload,
                 )
-                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
+                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for error handling
                 response_code = do_api_r.status_code
                 do_api_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
                 if do_api_json_pretty:
@@ -340,7 +340,7 @@ class Reliquary:
                     auth=(self.cogitation_username, self.cogitation_password),
                     data=do_api_payload,
                 )
-                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
+                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for error handling
                 response_code = do_api_r.status_code
                 do_api_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
                 if do_api_json_pretty:
@@ -356,7 +356,7 @@ class Reliquary:
                     verify=self.cogitation_certvalidation,
                     auth=(self.cogitation_username, self.cogitation_password),
                 )
-                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
+                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for error handling
                 response_code = do_api_r.status_code
                 do_api_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
                 if do_api_json_pretty:
@@ -368,6 +368,7 @@ class Reliquary:
                     "do_api_get_headers": self.cogitation_headers,
                     "do_api_url": do_api_url,
                     "do_api_verb": do_api_verb,
+                    "do_api_payload": do_api_payload
                 }
                 print(self.json_prettyprint(do_api_dryrun_report))
         except requests.Timeout:
@@ -423,7 +424,7 @@ class Reliquary:
                     verify=self.cogitation_certvalidation,
                     json=do_api_payload,
                 )
-                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
+                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for error handling
                 response_code = do_api_r.status_code
                 do_api_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
                 if do_api_json_pretty:
@@ -438,7 +439,7 @@ class Reliquary:
                     verify=self.cogitation_certvalidation,
                     data=do_api_payload,
                 )
-                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
+                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for error handling
                 response_code = do_api_r.status_code
                 do_api_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
                 if do_api_json_pretty:
@@ -453,7 +454,7 @@ class Reliquary:
                     headers=self.cogitation_headers,
                     verify=self.cogitation_certvalidation,
                 )
-                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for erro handling
+                # We'll be discarding the actual `Response` object after this, but we do want to get HTTP status for error handling
                 response_code = do_api_r.status_code
                 do_api_r.raise_for_status()  # trigger an exception before trying to convert or read data. This should allow us to get good error info
                 if do_api_json_pretty:
@@ -465,6 +466,7 @@ class Reliquary:
                     "do_api_get_headers": self.cogitation_headers,
                     "do_api_url": do_api_url,
                     "do_api_verb": do_api_verb,
+                    "do_api_payload": do_api_payload
                 }
                 print(self.json_prettyprint(do_api_dryrun_report))
         except requests.Timeout:

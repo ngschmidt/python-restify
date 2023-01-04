@@ -80,6 +80,16 @@
 			"requiresvariables": false,
 			"variables": {}
 		},
+		"get_vcenter_cluster": {
+			"uri": "/api/vcenter/cluster/{{ id }}",
+			"description": "Fetch vSphere Cluster",
+			"method": "KEY_GET",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": false
+			}
+		},
 		"get_vcenter_folders": {
 			"uri": "/api/vcenter/folder",
 			"description": "Fetch vSphere Folders",
@@ -96,6 +106,16 @@
 			"requiresvariables": false,
 			"variables": {}
 		},
+		"get_vcenter_datastore": {
+			"uri": "/api/vcenter/datastore/{{ id }}",
+			"description": "Fetch vSphere Datastore",
+			"method": "KEY_GET",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": false
+			}
+		},
 		"post_deploy_vm": {
 			"uri": "/api/vcenter/vm-template/library-items/{{ id }}?action=deploy",
 			"description": "Deploy a VM from a Content Library",
@@ -110,7 +130,7 @@
 				"datastore": false
 			},
 			"payload": {
-				"name": "{{ hostname }}",
+				"name": "{{ name }}",
 				"disk_storage": {
 					"datastore": "{{ datastore }}"
 				},

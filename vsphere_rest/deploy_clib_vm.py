@@ -7,7 +7,6 @@
 # System Calls
 import os
 import sys
-import requests
 
 # Arguments Parsing
 import argparse
@@ -36,6 +35,7 @@ play_help = (
 parser = argparse.ArgumentParser(description="Fetch via API")
 parser.add_argument("-f", help="REST Settings File (JSON)")
 parser.add_argument("-p", help="RESTful Payload")
+parser.add_argument("-v", action="store_true")
 args = parser.parse_args()
 
 # Initialize vSphere Connection
@@ -112,28 +112,22 @@ work_dict["content_libraries"]["content_libraries"] = json.loads(
     cogitation_interface.namshub("get_clibs")
 )
 for i in work_dict["content_libraries"]["content_libraries"]:
-    work_dict["content_libraries"]["content_libraries_contents"][i] = json.loads(
+    # Create a temporary variable, because the overwriting-in-place will end the loop after the first iteration
+    nested_loop_list = json.loads(
         cogitation_interface.namshub(
             "get_clib_library_items", namshub_variables={"id": i}
         )
     )
-    # Create a temporary variable, because the overwriting-in-place will end the loop after the first iteration
-    nested_loop_list = work_dict["content_libraries"]["content_libraries_contents"][
-        i
-    ].copy()
-    work_dict["content_libraries"]["content_libraries_contents"][i] = {}
     # Check on each template ID
     for ii in nested_loop_list:
         # Grab info on the content library object
-        work_dict["content_libraries"]["content_libraries_contents"][i][
-            ii
-        ] = json.loads(
+        work_dict["content_libraries"]["content_libraries_contents"][ii] = json.loads(
             cogitation_interface.namshub(
                 "get_clib_library_item", namshub_variables={"id": ii}
             )
         )
         # Then, check and see if it's in vCenter
-        work_dict["content_libraries"]["content_libraries_contents"][i][ii][
+        work_dict["content_libraries"]["content_libraries_contents"][ii][
             "vcenter_obj"
         ] = json.loads(
             cogitation_interface.namshub(
@@ -153,9 +147,85 @@ work_dict["vsphere"]["vcenter_clusters"] = json.loads(
     cogitation_interface.namshub("get_vcenter_clusters")
 )
 
+# If no entries were provided, generate suggestions
+if not args.p:
+    json_payload = {
+        "id": {"description": "The Content Library object to clone", "suggestions": {}},
+        "name": "Example",
+        "datastore": {
+            "description": "The vSphere datastore to put virtual disks on",
+            "suggestions": {},
+        },
+        "folder": {
+            "description": "The vCenter folder to place the VM into",
+            "suggestions": {},
+        },
+        "cluster": {
+            "description": "The vSphere compute cluster to put the VM into",
+            "suggestions": {},
+        },
+    }
+    # Loop through and validate templates before suggesting them
+    for i in work_dict["content_libraries"]["content_libraries_contents"]:
+        if (
+            work_dict["content_libraries"]["content_libraries_contents"][i]["vcenter_obj"].get("error_type", True)
+            != "INTERNAL_SERVER_ERROR"
+        ):
+            json_payload["id"]["suggestions"][i] = {
+                "name": work_dict["content_libraries"][
+                    "content_libraries_contents"
+                ][i]["name"],
+                "guest_OS": work_dict["content_libraries"][
+                    "content_libraries_contents"
+                ][i]["vcenter_obj"].get("guest_OS", "UNKNOWN"),
+            }
+    # Looping datastore suggestions is easy for now. If we knew more data, this would be more refined
+    for i in work_dict["vsphere"]["vcenter_datastores"]:
+        json_payload["datastore"]["suggestions"][i["datastore"]] = {}
+        json_payload["datastore"]["suggestions"][i["datastore"]]["name"] = i["name"]
+    # Then, only VM folders
+    for i in work_dict["vsphere"]["vcenter_folders"]:
+        if i["type"] == "VIRTUAL_MACHINE":
+            json_payload["folder"]["suggestions"][i["folder"]] = i["name"]
+    # Then, Clusters
+    for i in work_dict["vsphere"]["vcenter_clusters"]:
+        json_payload["cluster"]["suggestions"][i["cluster"]] = i["name"]
+else:
+    # Let's start by validating inputs. Schema as reference:
+    """
+    json_payload = {
+        "id": False,
+        "name": False,
+        "datastore": False,
+        "folder": False,
+        "cluster": False,
+    }
+    """
+    # Check Template ID first against the collected data, and with a final API call
+    if json_payload["id"] not in work_dict["content_libraries"]["content_libraries_contents"]:
+        exit("VM Template UUID " + json_payload["id"] + " was not found in cached data!")
+    if json.loads(cogitation_interface.namshub("get_vcenter_library_item", namshub_variables={"id": json_payload["id"]})).get("error_type", False):
+        exit("VM Template UUID " + json_payload["id"] + " was not found on the remote vCenter Server!")
+    # Do the same for the datastore
+    if not any(d.get("datastore", False) == json_payload["datastore"] for d in work_dict["vsphere"]["vcenter_datastores"]):
+        exit("vSphere Data Store ID " + json_payload["datastore"] + " was not found in cached data!")
+    if json.loads(cogitation_interface.namshub("get_vcenter_datastore", namshub_variables={"id": json_payload["datastore"]})).get("error_type", False):
+        exit("vSphere Data Store ID " + json_payload["datastore"] + " was not found on the remote vCenter Server!")
+    # vCenter REST API does not currently support querying the folder, so let's just check against the cache
+    if not any(d.get("folder", False) == json_payload["folder"] for d in work_dict["vsphere"]["vcenter_folders"]):
+        exit("vSphere Folder ID " + json_payload["folder"] + " was not found in cached data!")
+    # Next, check for a valid cluster
+    if not any(d.get("cluster", False) == json_payload["cluster"] for d in work_dict["vsphere"]["vcenter_clusters"]):
+        exit("vSphere Cluster ID " + json_payload["cluster"] + " was not found in cached data!")
+    if json.loads(cogitation_interface.namshub("get_vcenter_cluster", namshub_variables={"id": json_payload["cluster"]})).get("error_type", False):
+        exit("vSphere Cluster ID " + json_payload["cluster"] + " was not found on the remote vCenter Server!")
 
-# Let's check for a configuration. If none exists, dump the vSphere details to help the process along
-
+    # In the words of Darth Sidious, Do it!
+    print(cogitation_interface.namshub("post_deploy_vm", namshub_variables=json_payload, namshub_dryrun=True))
 # Dump the work
-
-print(json.dumps(work_dict, indent=4))
+if args.v:
+    print("Work Dictionary:")
+    print(json.dumps(work_dict, indent=4))
+    print("Payload:")
+    print(json.dumps(json_payload, indent=4))
+    print("Operation Complete!")
