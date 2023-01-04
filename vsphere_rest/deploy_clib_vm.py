@@ -112,28 +112,22 @@ work_dict["content_libraries"]["content_libraries"] = json.loads(
     cogitation_interface.namshub("get_clibs")
 )
 for i in work_dict["content_libraries"]["content_libraries"]:
-    work_dict["content_libraries"]["content_libraries_contents"][i] = json.loads(
+    # Create a temporary variable, because the overwriting-in-place will end the loop after the first iteration
+    nested_loop_list = json.loads(
         cogitation_interface.namshub(
             "get_clib_library_items", namshub_variables={"id": i}
         )
     )
-    # Create a temporary variable, because the overwriting-in-place will end the loop after the first iteration
-    nested_loop_list = work_dict["content_libraries"]["content_libraries_contents"][
-        i
-    ].copy()
-    work_dict["content_libraries"]["content_libraries_contents"][i] = {}
     # Check on each template ID
     for ii in nested_loop_list:
         # Grab info on the content library object
-        work_dict["content_libraries"]["content_libraries_contents"][i][
-            ii
-        ] = json.loads(
+        work_dict["content_libraries"]["content_libraries_contents"][ii] = json.loads(
             cogitation_interface.namshub(
                 "get_clib_library_item", namshub_variables={"id": ii}
             )
         )
         # Then, check and see if it's in vCenter
-        work_dict["content_libraries"]["content_libraries_contents"][i][ii][
+        work_dict["content_libraries"]["content_libraries_contents"][ii][
             "vcenter_obj"
         ] = json.loads(
             cogitation_interface.namshub(
@@ -173,21 +167,18 @@ if not args.p:
     }
     # Loop through and validate templates before suggesting them
     for i in work_dict["content_libraries"]["content_libraries_contents"]:
-        for ii in work_dict["content_libraries"]["content_libraries_contents"][i]:
-            if (
-                work_dict["content_libraries"]["content_libraries_contents"][i][ii][
-                    "vcenter_obj"
-                ].get("error_type", True)
-                != "INTERNAL_SERVER_ERROR"
-            ):
-                json_payload["id"]["suggestions"][ii] = {
-                    "name": work_dict["content_libraries"][
-                        "content_libraries_contents"
-                    ][i][ii]["name"],
-                    "guest_OS": work_dict["content_libraries"][
-                        "content_libraries_contents"
-                    ][i][ii]["vcenter_obj"].get("guest_OS", "UNKNOWN"),
-                }
+        if (
+            work_dict["content_libraries"]["content_libraries_contents"][i]["vcenter_obj"].get("error_type", True)
+            != "INTERNAL_SERVER_ERROR"
+        ):
+            json_payload["id"]["suggestions"][i] = {
+                "name": work_dict["content_libraries"][
+                    "content_libraries_contents"
+                ][i]["name"],
+                "guest_OS": work_dict["content_libraries"][
+                    "content_libraries_contents"
+                ][i]["vcenter_obj"].get("guest_OS", "UNKNOWN"),
+            }
     # Looping datastore suggestions is easy for now. If we knew more data, this would be more refined
     for i in work_dict["vsphere"]["vcenter_datastores"]:
         json_payload["datastore"]["suggestions"][i["datastore"]] = {}
@@ -199,8 +190,20 @@ if not args.p:
     # Then, Clusters
     for i in work_dict["vsphere"]["vcenter_clusters"]:
         json_payload["cluster"]["suggestions"][i["cluster"]] = i["name"]
-
-# Let's start by validating inputs
+else:
+    # Let's start by validating inputs
+    """
+    json_payload = {
+        "id": False,
+        "name": False,
+        "datastore": False,
+        "folder": False,
+        "cluster": False,
+    }
+    """
+    # Check Template ID first
+    if json_payload["id"] in work_dict["content_libraries"]["content_libraries_contents"]:
+        pass
 
 # Dump the work
 if args.v:
