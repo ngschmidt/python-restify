@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [03-Jan-2023]
+
+### Added
+
+- Content Library Deployment tool
+  - Provide a `dict` of suggestions if no payload is provided
+  - Lots of bounds checking against cached data
+  - Pre-deployment validation wherever possible
+- API calls required to deploy from a content library
+
 ## [02-Jan-2023]
 
 ### Added
