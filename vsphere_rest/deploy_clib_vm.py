@@ -201,9 +201,11 @@ else:
         "cluster": False,
     }
     """
-    # Check Template ID first
-    if json_payload["id"] in work_dict["content_libraries"]["content_libraries_contents"]:
-        pass
+    # Check Template ID first against the collected data, and with a final API call
+    if json_payload["id"] not in work_dict["content_libraries"]["content_libraries_contents"]:
+        exit("VM Template UUID " + json_payload["id"] + " was not found in cached data!")
+    if json.loads(cogitation_interface.namshub("get_vcenter_library_item", namshub_variables={"id": json_payload["id"]})).get("error_type", False):
+        exit("VM Template UUID " + json_payload["id"] + " was not found on the remote vCenter Server!")
 
 # Dump the work
 if args.v:
