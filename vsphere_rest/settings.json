@@ -130,7 +130,7 @@
 				"datastore": false
 			},
 			"payload": {
-				"name": "{{ hostname }}",
+				"name": "{{ name }}",
 				"disk_storage": {
 					"datastore": "{{ datastore }}"
 				},

@@ -220,10 +220,12 @@ else:
     if json.loads(cogitation_interface.namshub("get_vcenter_cluster", namshub_variables={"id": json_payload["cluster"]})).get("error_type", False):
         exit("vSphere Cluster ID " + json_payload["cluster"] + " was not found on the remote vCenter Server!")
 
+    # In the words of Darth Sidious, Do it!
+    print(cogitation_interface.namshub("post_deploy_vm", namshub_variables=json_payload, namshub_dryrun=True))
 # Dump the work
 if args.v:
+    print("Work Dictionary:")
     print(json.dumps(work_dict, indent=4))
-    print("Work Dictionary")
-print("Payload:")
-print(json.dumps(json_payload, indent=4))
-print("Operation Complete!")
+    print("Payload:")
+    print(json.dumps(json_payload, indent=4))
+    print("Operation Complete!")
