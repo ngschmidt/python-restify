@@ -199,10 +199,6 @@ if not args.p:
     # Then, Clusters
     for i in work_dict["vsphere"]["vcenter_clusters"]:
         json_payload["cluster"]["suggestions"][i["cluster"]] = i["name"]
-    # Dump it
-    print("Suggestions:")
-    print(json.dumps(json_payload, indent=4))
-    print("Operation Complete!")
 
 # Let's start by validating inputs
 
@@ -210,3 +206,6 @@ if not args.p:
 if args.v:
     print(json.dumps(work_dict, indent=4))
     print("Work Dictionary")
+print("Payload:")
+print(json.dumps(json_payload, indent=4))
+print("Operation Complete!")
