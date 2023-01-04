@@ -191,7 +191,7 @@ if not args.p:
     for i in work_dict["vsphere"]["vcenter_clusters"]:
         json_payload["cluster"]["suggestions"][i["cluster"]] = i["name"]
 else:
-    # Let's start by validating inputs
+    # Let's start by validating inputs. Schema as reference:
     """
     json_payload = {
         "id": False,
@@ -206,6 +206,19 @@ else:
         exit("VM Template UUID " + json_payload["id"] + " was not found in cached data!")
     if json.loads(cogitation_interface.namshub("get_vcenter_library_item", namshub_variables={"id": json_payload["id"]})).get("error_type", False):
         exit("VM Template UUID " + json_payload["id"] + " was not found on the remote vCenter Server!")
+    # Do the same for the datastore
+    if not any(d.get("datastore", False) == json_payload["datastore"] for d in work_dict["vsphere"]["vcenter_datastores"]):
+        exit("vSphere Data Store ID " + json_payload["datastore"] + " was not found in cached data!")
+    if json.loads(cogitation_interface.namshub("get_vcenter_datastore", namshub_variables={"id": json_payload["datastore"]})).get("error_type", False):
+        exit("vSphere Data Store ID " + json_payload["datastore"] + " was not found on the remote vCenter Server!")
+    # vCenter REST API does not currently support querying the folder, so let's just check against the cache
+    if not any(d.get("folder", False) == json_payload["folder"] for d in work_dict["vsphere"]["vcenter_folders"]):
+        exit("vSphere Folder ID " + json_payload["folder"] + " was not found in cached data!")
+    # Next, check for a valid cluster
+    if not any(d.get("cluster", False) == json_payload["cluster"] for d in work_dict["vsphere"]["vcenter_clusters"]):
+        exit("vSphere Cluster ID " + json_payload["cluster"] + " was not found in cached data!")
+    if json.loads(cogitation_interface.namshub("get_vcenter_cluster", namshub_variables={"id": json_payload["cluster"]})).get("error_type", False):
+        exit("vSphere Cluster ID " + json_payload["cluster"] + " was not found on the remote vCenter Server!")
 
 # Dump the work
 if args.v:
