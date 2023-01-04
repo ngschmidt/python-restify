@@ -221,7 +221,9 @@ else:
         exit("vSphere Cluster ID " + json_payload["cluster"] + " was not found on the remote vCenter Server!")
 
     # In the words of Darth Sidious, Do it!
-    print(cogitation_interface.namshub("post_deploy_vm", namshub_variables=json_payload))
+    deployed_vm = cogitation_interface.namshub("post_deploy_vm", namshub_variables=json_payload)
+    print(json.dumps(deployed_vm), indent=4)
+    # TODO: Don't trust the output, validate it
 
 # Dump the work
 if args.v:
