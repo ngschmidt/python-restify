@@ -188,6 +188,22 @@ if not args.p:
                         "content_libraries_contents"
                     ][i][ii].get("guest_OS", "UNKNOWN"),
                 }
+    # Looping datastore suggestions is easy for now. If we knew more data, this would be more refined
+    for i in work_dict["vsphere"]["vcenter_datastores"]:
+        json_payload["datastore"]["suggestions"][i["datastore"]] = {}
+        json_payload["datastore"]["suggestions"][i["datastore"]]["name"] = i["name"]
+    # Then, only VM folders
+    for i in work_dict["vsphere"]["vcenter_folders"]:
+        if i["type"] == "VIRTUAL_MACHINE":
+            json_payload["folder"]["suggestions"][i["folder"]] = i["name"]
+    # Then, Clusters
+    for i in work_dict["vsphere"]["vcenter_clusters"]:
+        json_payload["cluster"]["suggestions"][i["cluster"]] = i["name"]
+    # Dump it
+    print("Suggestions:")
+    print(json.dumps(json_payload, indent=4))
+    print("Operation Complete!")
+
 
 # Let's check for a configuration. If none exists, dump the vSphere details to help the process along
 
@@ -195,6 +211,3 @@ if not args.p:
 if args.v:
     print(json.dumps(work_dict, indent=4))
     print("Work Dictionary")
-print("Suggestions:")
-print(json.dumps(json_payload, indent=4))
-print("Operation Complete!")
