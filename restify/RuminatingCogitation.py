@@ -540,11 +540,11 @@ class Reliquary:
             namshub_variables = self.get_json_file_or_string(namshub_variables)
             namshub_resource = self.apply_template(namshub_resource, namshub_variables)
             # Check to see if the payload is a string before templating the payload
-            if namshub_payload and namshub_payload is str:
+            if namshub_payload:
+                # Serialize to a templateable string
+                namshub_payload = json.dumps(namshub_payload)
                 namshub_payload = self.apply_template(namshub_payload, namshub_variables)
-            elif namshub_payload is dict:
-                namshub_payload_json = json.dumps(namshub_payload)
-                namshub_payload = self.apply_template(namshub_payload_json, namshub_variables)
+                namshub_payload = json.loads(namshub_payload)
 
         # Make sure that the payload is a string before shippinng it to the API
         if namshub_payload and namshub_payload not in [str, dict]:
