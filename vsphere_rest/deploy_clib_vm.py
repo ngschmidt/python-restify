@@ -241,3 +241,16 @@ if args.v:
     print("Payload:")
     print(json.dumps(json_payload, indent=4))
     print("Operation Complete!")
+
+# Assemble Report
+results_dict = {
+    "payload": json_payload,
+    "results": deployed_vm_check_after,
+    "work": work_dict
+}
+# Write to file:
+try:
+    with open("results.json") as outfile:
+        outfile.write(results_dict)
+except Exception as e:
+    exit("Error found while trying to write results to file: " + str(e))
