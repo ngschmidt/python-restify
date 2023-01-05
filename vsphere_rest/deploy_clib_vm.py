@@ -251,6 +251,6 @@ results_dict = {
 # Write to file:
 try:
     with open("results.json", "w") as outfile:
-        outfile.write(json.dumps(results_dict))
+        outfile.write(json.dumps(results_dict, indent=4))
 except Exception as e:
     exit("Error found while trying to write results to file: " + str(e))
