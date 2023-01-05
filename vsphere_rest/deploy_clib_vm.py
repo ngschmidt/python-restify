@@ -221,9 +221,18 @@ else:
         exit("vSphere Cluster ID " + json_payload["cluster"] + " was not found on the remote vCenter Server!")
 
     # In the words of Darth Sidious, Do it!
-    deployed_vm = cogitation_interface.namshub("post_deploy_vm", namshub_variables=json_payload)
-    print(json.dumps(deployed_vm), indent=4)
-    # TODO: Don't trust the output, validate it
+    # Kidding, let's make sure that it doesn't have a name conflict before deploying
+    deployed_vm_check_before_count = len(json.loads(cogitation_interface.namshub("get_vm_search_name", namshub_variables={"id": json_payload["name"]})))
+    if deployed_vm_check_before_count > 0:
+        exit("vSphere VM Name '" + json_payload["name"] + "' already exists! Exiting...")
+    # Deploy the VM
+    deployed_vm = cogitation_interface.namshub("post_deploy_vm", namshub_variables=json_payload).strip("\"")
+    print("Deployed VM with ID: '" + deployed_vm + "'")
+    print(deployed_vm)
+    # Fetch VM details post-deployment
+    deployed_vm_check_after = cogitation_interface.namshub("get_vm", namshub_variables={"id": deployed_vm})
+    print("VM was verified as successfully deployed! VM Data: ")
+    print(deployed_vm_check_after)
 
 # Dump the work
 if args.v:
