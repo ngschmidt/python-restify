@@ -168,13 +168,15 @@ if not args.p:
     # Loop through and validate templates before suggesting them
     for i in work_dict["content_libraries"]["content_libraries_contents"]:
         if (
-            work_dict["content_libraries"]["content_libraries_contents"][i]["vcenter_obj"].get("error_type", True)
+            work_dict["content_libraries"]["content_libraries_contents"][i][
+                "vcenter_obj"
+            ].get("error_type", True)
             != "INTERNAL_SERVER_ERROR"
         ):
             json_payload["id"]["suggestions"][i] = {
-                "name": work_dict["content_libraries"][
-                    "content_libraries_contents"
-                ][i]["name"],
+                "name": work_dict["content_libraries"]["content_libraries_contents"][i][
+                    "name"
+                ],
                 "guest_OS": work_dict["content_libraries"][
                     "content_libraries_contents"
                 ][i]["vcenter_obj"].get("guest_OS", "UNKNOWN"),
@@ -202,28 +204,100 @@ else:
     }
     """
     # Check Template ID first against the collected data, and with a final API call
-    if json_payload["id"] not in work_dict["content_libraries"]["content_libraries_contents"]:
-        exit("VM Template UUID " + json_payload["id"] + " was not found in cached data!")
-    if json.loads(cogitation_interface.namshub("get_vcenter_library_item", namshub_variables={"id": json_payload["id"]})).get("error_type", False):
-        exit("VM Template UUID " + json_payload["id"] + " was not found on the remote vCenter Server!")
+    if (
+        json_payload["id"]
+        not in work_dict["content_libraries"]["content_libraries_contents"]
+    ):
+        exit(
+            "VM Template UUID " + json_payload["id"] + " was not found in cached data!"
+        )
+    if json.loads(
+        cogitation_interface.namshub(
+            "get_vcenter_library_item", namshub_variables={"id": json_payload["id"]}
+        )
+    ).get("error_type", False):
+        exit(
+            "VM Template UUID "
+            + json_payload["id"]
+            + " was not found on the remote vCenter Server!"
+        )
     # Do the same for the datastore
-    if not any(d.get("datastore", False) == json_payload["datastore"] for d in work_dict["vsphere"]["vcenter_datastores"]):
-        exit("vSphere Data Store ID " + json_payload["datastore"] + " was not found in cached data!")
-    if json.loads(cogitation_interface.namshub("get_vcenter_datastore", namshub_variables={"id": json_payload["datastore"]})).get("error_type", False):
-        exit("vSphere Data Store ID " + json_payload["datastore"] + " was not found on the remote vCenter Server!")
+    if not any(
+        d.get("datastore", False) == json_payload["datastore"]
+        for d in work_dict["vsphere"]["vcenter_datastores"]
+    ):
+        exit(
+            "vSphere Data Store ID "
+            + json_payload["datastore"]
+            + " was not found in cached data!"
+        )
+    if json.loads(
+        cogitation_interface.namshub(
+            "get_vcenter_datastore", namshub_variables={"id": json_payload["datastore"]}
+        )
+    ).get("error_type", False):
+        exit(
+            "vSphere Data Store ID "
+            + json_payload["datastore"]
+            + " was not found on the remote vCenter Server!"
+        )
     # vCenter REST API does not currently support querying the folder, so let's just check against the cache
-    if not any(d.get("folder", False) == json_payload["folder"] for d in work_dict["vsphere"]["vcenter_folders"]):
-        exit("vSphere Folder ID " + json_payload["folder"] + " was not found in cached data!")
+    if not any(
+        d.get("folder", False) == json_payload["folder"]
+        for d in work_dict["vsphere"]["vcenter_folders"]
+    ):
+        exit(
+            "vSphere Folder ID "
+            + json_payload["folder"]
+            + " was not found in cached data!"
+        )
     # Next, check for a valid cluster
-    if not any(d.get("cluster", False) == json_payload["cluster"] for d in work_dict["vsphere"]["vcenter_clusters"]):
-        exit("vSphere Cluster ID " + json_payload["cluster"] + " was not found in cached data!")
-    if json.loads(cogitation_interface.namshub("get_vcenter_cluster", namshub_variables={"id": json_payload["cluster"]})).get("error_type", False):
-        exit("vSphere Cluster ID " + json_payload["cluster"] + " was not found on the remote vCenter Server!")
+    if not any(
+        d.get("cluster", False) == json_payload["cluster"]
+        for d in work_dict["vsphere"]["vcenter_clusters"]
+    ):
+        exit(
+            "vSphere Cluster ID "
+            + json_payload["cluster"]
+            + " was not found in cached data!"
+        )
+    if json.loads(
+        cogitation_interface.namshub(
+            "get_vcenter_cluster", namshub_variables={"id": json_payload["cluster"]}
+        )
+    ).get("error_type", False):
+        exit(
+            "vSphere Cluster ID "
+            + json_payload["cluster"]
+            + " was not found on the remote vCenter Server!"
+        )
 
     # In the words of Darth Sidious, Do it!
-    print(json_payload)
-    # TODO: It's not templating the payload
-    print(cogitation_interface.namshub("post_deploy_vm", namshub_variables=json_payload, namshub_dryrun=True))
+    # Kidding, let's make sure that it doesn't have a name conflict before deploying
+    deployed_vm_check_before_count = len(
+        json.loads(
+            cogitation_interface.namshub(
+                "get_vm_search_name", namshub_variables={"id": json_payload["name"]}
+            )
+        )
+    )
+    if deployed_vm_check_before_count > 0:
+        exit(
+            "vSphere VM Name '" + json_payload["name"] + "' already exists! Exiting..."
+        )
+    # Deploy the VM
+    deployed_vm = cogitation_interface.namshub(
+        "post_deploy_vm", namshub_variables=json_payload
+    ).strip('"')
+    print("Deployed VM with ID: '" + deployed_vm + "'")
+    print(deployed_vm)
+    # Fetch VM details post-deployment
+    deployed_vm_check_after = cogitation_interface.namshub(
+        "get_vm", namshub_variables={"id": deployed_vm}
+    )
+    print("VM was verified as successfully deployed! VM Data: ")
+    print(deployed_vm_check_after)
+
 # Dump the work
 if args.v:
     print("Work Dictionary:")
@@ -231,3 +305,16 @@ if args.v:
     print("Payload:")
     print(json.dumps(json_payload, indent=4))
     print("Operation Complete!")
+
+# Assemble Report
+results_dict = {
+    "payload": json_payload,
+    "results": deployed_vm_check_after,
+    "work": work_dict,
+}
+# Write to file:
+try:
+    with open("results.json", "w") as outfile:
+        outfile.write(json.dumps(results_dict, indent=4))
+except Exception as e:
+    exit("Error found while trying to write results to file: " + str(e))

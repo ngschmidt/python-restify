@@ -116,6 +116,26 @@
 				"id": false
 			}
 		},
+		"get_vm_search_name": {
+			"uri": "/api/vcenter/vm?names={{ id }}",
+			"description": "Search vCenter for a VM by name",
+			"method": "KEY_GET",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": false
+			}
+		},
+		"get_vm": {
+			"uri": "/api/vcenter/vm/{{ id }}",
+			"description": "Fetch vSphere VM Data",
+			"method": "KEY_GET",
+			"requiresbody": false,
+			"requiresvariables": true,
+			"variables": {
+				"id": false
+			}
+		},
 		"post_deploy_vm": {
 			"uri": "/api/vcenter/vm-template/library-items/{{ id }}?action=deploy",
 			"description": "Deploy a VM from a Content Library",
