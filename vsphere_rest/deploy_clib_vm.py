@@ -297,24 +297,25 @@ else:
     )
     print("VM was verified as successfully deployed! VM Data: ")
     print(deployed_vm_check_after)
+    # Assemble Report
+    results_dict = {
+        "payload": json_payload,
+        "results": deployed_vm_check_after,
+        "work": work_dict,
+    }
+    # Write to file:
+    try:
+        with open("results.json", "w") as outfile:
+            outfile.write(json.dumps(results_dict, indent=4))
+    except Exception as e:
+        exit("Error found while trying to write results to file: " + str(e))
 
-# Dump the work
+# Dump the work if requested
 if args.v:
     print("Work Dictionary:")
     print(json.dumps(work_dict, indent=4))
-    print("Payload:")
-    print(json.dumps(json_payload, indent=4))
-    print("Operation Complete!")
 
-# Assemble Report
-results_dict = {
-    "payload": json_payload,
-    "results": deployed_vm_check_after,
-    "work": work_dict,
-}
-# Write to file:
-try:
-    with open("results.json", "w") as outfile:
-        outfile.write(json.dumps(results_dict, indent=4))
-except Exception as e:
-    exit("Error found while trying to write results to file: " + str(e))
+# Generate a report with suggestions if empty, else report what instructions the code received
+print("Payload:")
+print(json.dumps(json_payload, indent=4))
+print("Operation Complete!")
